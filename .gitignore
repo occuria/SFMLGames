@@ -1,0 +1,2 @@
+#ignore YouCompleteMe configuration file
+.ycm*.py
