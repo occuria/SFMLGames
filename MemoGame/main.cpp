@@ -70,6 +70,7 @@ int main() {
 		std::cout << "Error opening card back texture file" << std::endl;
 		abort();
 	}
+	textureC.setSmooth(true);
 	/* Displays the board of cards */
 	std::vector<std::vector<sf::RectangleShape>> board;
 	board = generateBoard(6, 3, textureC);
