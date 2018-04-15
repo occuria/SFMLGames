@@ -1,31 +1,36 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <cmath>
+#include <algorithm>
 
 constexpr int width = 1280;
 constexpr int height = 720;
-constexpr float cblank = 1.5;
+constexpr float spacing = 1.5;
 
-/* Generates the board according to the number of cards */
-std::vector<std::vector<sf::RectangleShape>> generateBoard(int nbcards, sf::Texture &texture)
+/* returns card size and card spacing in function of board size and number of cards */
+std::vector<float> getCardSize(const int nbCards, const int boardSize)
 {
-	if (nbcards < 2 || nbcards > 20) {
-		std::cout << "Number of cards must be between 2 and 20" << std::endl;
-		abort();
-	}
-
-	std::vector<std::vector<sf::RectangleShape>> board(nbcards, std::vector<sf::RectangleShape>(nbcards));
 	/* Thanks to my friend Varens who gave me these formulas */
-	float cardSize = height/(cblank+nbcards);
-	float blankSize = (cblank*height)/(cblank+nbcards)*1/(nbcards+1); 
+	float cardSize = boardSize / (spacing+nbCards);
+	float spacingSize = (spacing*boardSize)/(spacing+nbCards)*1/(nbCards+1);
+	std::vector<float> res = {cardSize, spacingSize};
+	return res;
+}
 
-	for (int i=0; i<nbcards; i++) {
-		for (int j=0; j<nbcards; j++) {
+/* Generates the board in function of the number of cards */
+std::vector<std::vector<sf::RectangleShape>> generateBoard(int nbX, int nbY, sf::Texture &texture)
+{
+	std::vector<std::vector<sf::RectangleShape>> board(nbX, std::vector<sf::RectangleShape>(nbY));
+	float cardSize = std::min(getCardSize(nbX, width)[0],getCardSize(nbY, height)[0]);
+	float spacingSize = std::min(getCardSize(nbX, width)[1],getCardSize(nbY, height)[1]);
+	float offsetX = (width-nbX*cardSize-(nbX-1)*spacingSize)/2;
+	float offsetY = (height-nbY*cardSize-(nbY-1)*spacingSize)/2;
+
+	for (int i=0; i<nbX; i++) {
+		for (int j=0; j<nbY; j++) {
 			/* Creates one card and sets its position on the board */
 			sf::RectangleShape r(sf::Vector2f(cardSize, cardSize));
-			r.setPosition(blankSize*(i+1)+cardSize*i+(width-height)/2, blankSize*(j+1)+cardSize*j);
+			r.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
 			r.setTexture(&texture);
-			//r.setTextureRect(sf::IntRect(0,0,300,300));
 			r.setOutlineThickness(1);
 			r.setOutlineColor(sf::Color::Black);
 			board.at(i).push_back(r);
@@ -48,7 +53,7 @@ void displayBoard(sf::RenderWindow &window, std::vector<std::vector<sf::Rectangl
 int main() {
 	/*sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);*/
 	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game");
-	/* Adds the board texture */
+	/* Adds the frame texture */
 	sf::Texture textureB;
 	if (!textureB.loadFromFile("./Images/Board.jpg")) {
 		std::cout << "Error opening board texture file" << std::endl;
@@ -67,7 +72,7 @@ int main() {
 	}
 	/* Displays the board of cards */
 	std::vector<std::vector<sf::RectangleShape>> board;
-	board = generateBoard(6, textureC);
+	board = generateBoard(6, 3, textureC);
 	displayBoard(window, board);
 	window.display();
 
