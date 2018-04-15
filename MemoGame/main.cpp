@@ -7,7 +7,7 @@ constexpr int height = 720;
 constexpr float cblank = 1.5;
 
 /* Generates the board according to the number of cards */
-std::vector<std::vector<sf::RectangleShape>> generateBoard(int nbcards)
+std::vector<std::vector<sf::RectangleShape>> generateBoard(int nbcards, sf::Texture &texture)
 {
 	if (nbcards < 2 || nbcards > 20) {
 		std::cout << "Number of cards must be between 2 and 20" << std::endl;
@@ -24,9 +24,10 @@ std::vector<std::vector<sf::RectangleShape>> generateBoard(int nbcards)
 			/* Creates one card and sets its position on the board */
 			sf::RectangleShape r(sf::Vector2f(cardSize, cardSize));
 			r.setPosition(blankSize*(i+1)+cardSize*i+(width-height)/2, blankSize*(j+1)+cardSize*j);
-			r.setFillColor(sf::Color::Green);
+			r.setTexture(&texture);
+			//r.setTextureRect(sf::IntRect(0,0,300,300));
 			r.setOutlineThickness(1);
-			r.setOutlineColor(sf::Color::Red);
+			r.setOutlineColor(sf::Color::Black);
 			board.at(i).push_back(r);
 		}
 	}
@@ -45,16 +46,28 @@ void displayBoard(sf::RenderWindow &window, std::vector<std::vector<sf::Rectangl
 }
 
 int main() {
-	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);
+	/*sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);*/
+	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game");
+	/* Adds the board texture */
+	sf::Texture textureB;
+	if (!textureB.loadFromFile("./Images/Board.jpg")) {
+		std::cout << "Error opening board texture file" << std::endl;
+		abort();
+	}
 	/* Displays the frame */
 	sf::RectangleShape cadre(sf::Vector2f(width, height));
-	cadre.setFillColor(sf::Color::Blue);
-	cadre.setOutlineThickness(3);
-	cadre.setOutlineColor(sf::Color::Red);
+	cadre.setTexture(&textureB);
+	cadre.setTextureRect(sf::IntRect(0,0,width,height));
 	window.draw(cadre);
+	/* Adds the card back texture */
+	sf::Texture textureC;
+	if (!textureC.loadFromFile("./Images/CardBack.jpg")) {
+		std::cout << "Error opening card back texture file" << std::endl;
+		abort();
+	}
 	/* Displays the board of cards */
 	std::vector<std::vector<sf::RectangleShape>> board;
-	board = generateBoard(8);
+	board = generateBoard(6, textureC);
 	displayBoard(window, board);
 	window.display();
 
