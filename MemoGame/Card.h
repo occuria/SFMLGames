@@ -8,9 +8,9 @@ class Card
 	public:
 		
 		//Card(sf::RectangleShape s, sf::Texture b, sf::Texture f);
-		sf::RectangleShape getShape();
-		sf::Texture getBack();
-		sf::Texture getFront();
+		sf::RectangleShape &getShape();
+		sf::Texture &getBack();
+		sf::Texture &getFront();
 		void setShape(sf::RectangleShape r);
 		void setBack(sf::Texture t);
 		void setFront(sf::Texture t);

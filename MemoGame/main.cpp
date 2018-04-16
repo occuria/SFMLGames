@@ -1,11 +1,21 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <random>
 #include "Card.h"
 
 constexpr int width = 1600;
 constexpr int height = 900;
 constexpr float spacing = 1.5;
+
+/* allows random draws */
+int d(int const nbSides)
+{
+	static std::random_device rd;
+	static std::default_random_engine engine(rd());
+	std::uniform_int_distribution<> distribution(1, nbSides);
+	return distribution(engine);
+}
 
 /* returns card size and card spacing in function of board size and number of cards */
 std::vector<float> getCardSize(const int nbX, int nbY, const int width, const int height)
@@ -19,20 +29,8 @@ std::vector<float> getCardSize(const int nbX, int nbY, const int width, const in
 	return res;
 }
 
-/* returns a vector with n card fronts */
-std::vector<sf::Image> getCardFronts(int n)
-{
-	std::vector<sf::Image> res;
-	for (int i=0; i<n; i++) {
-		sf::Image image;
-		image.loadFromFile("./Images/MandalaCards/Card" + std::to_string(i+1) +".png");
-		res.push_back(image);
-	}
-	return res;
-}
-
 /* Generates the board in function of the number of cards */
-std::vector<std::vector<Card>> generateBoard(int nbX, int nbY, sf::Texture &texture)
+std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture, const std::vector<sf::Texture> cardFrontTexture)
 {
 	std::vector<std::vector<Card>> board(nbX, std::vector<Card>(nbY));
 	float cardSize = getCardSize(nbX, nbY, width, height)[0];
@@ -45,14 +43,14 @@ std::vector<std::vector<Card>> generateBoard(int nbX, int nbY, sf::Texture &text
 			/* Creates a card shape and sets its position on the board */
 			sf::RectangleShape r(sf::Vector2f(cardSize, cardSize));
 			r.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
-			r.setTexture(&texture);
 			r.setOutlineThickness(1);
 			r.setOutlineColor(sf::Color::Black);
 			/* Creates a card and adds it to the card matrix */
 			Card c;
 			c.setShape(r);
-			c.setBack(texture);
-			c.setFront(texture);
+			c.setBack(cardBackTexture);
+			c.setFront(cardFrontTexture[d(cardFrontTexture.size())-1]);
+			c.getShape().setTexture(&c.getFront());
 			board[i].push_back(c);
 		}
 	}
@@ -60,13 +58,20 @@ std::vector<std::vector<Card>> generateBoard(int nbX, int nbY, sf::Texture &text
 }
 
 /* Displays a board of cards */
-void displayBoard(sf::RenderWindow &window, std::vector<std::vector<Card>> board)
+void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vector<std::vector<Card>> board)
 {
+	/* Displays the frame */
+	sf::RectangleShape frame(sf::Vector2f(width, height));
+	frame.setTexture(&frameTexture);
+	frame.setTextureRect(sf::IntRect(0,0,width,height));
+	window.draw(frame);
+	/* Displays cards */
 	for (unsigned int i=0; i<board.size(); i++) {
 		for (Card c : board[i]) {
 			window.draw(c.getShape());
 		}
 	}
+	window.display();
 	return;
 }
 
@@ -75,36 +80,48 @@ int main() {
 	//sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game");
 
 	/* Adds the frame texture */
-	sf::Texture textureB;
-	if (!textureB.loadFromFile("./Images/Board.jpg")) {
-		std::cout << "Error opening board texture file" << std::endl;
+	sf::Texture frameTexture;
+	if (!frameTexture.loadFromFile("./Images/Board.jpg")) {
+		std::cout << "Error opening frame texture file" << std::endl;
 		abort();
 	}
-	/* Displays the frame */
-	sf::RectangleShape cadre(sf::Vector2f(width, height));
-	cadre.setTexture(&textureB);
-	cadre.setTextureRect(sf::IntRect(0,0,width,height));
-	window.draw(cadre);
+	frameTexture.setRepeated(true);
 
 	/* Adds the card back texture */
-	sf::Texture textureC;
-	if (!textureC.loadFromFile("./Images/MandalaCards/CardBack.jpg")) {
+	sf::Texture cardBackTexture;
+	if (!cardBackTexture.loadFromFile("./Images/MandalaCards/CardBack.jpg")) {
 		std::cout << "Error opening card back texture file" << std::endl;
 		abort();
 	}
-	textureC.setSmooth(true);
+	cardBackTexture.setSmooth(true);
+
+	/* Adds the card front textures vector */
+	std::vector<sf::Texture> cardFrontTexture;
+	for (int i=0; i<9; i++) {
+		sf::Texture t;
+		t.loadFromFile("./Images/MandalaCards/Card" + std::to_string(i+1) +".png");
+		std::cout << "./Images/MandalaCards/Card" + std::to_string(i+1) +".png" << std::endl;
+		cardFrontTexture.push_back(t);
+	}
+
 	/* Displays the board of cards */
 	std::vector<std::vector<Card>> board;
-	board = generateBoard(6, 3, textureC);
-	displayBoard(window, board);
+	board = generateBoard(6, 3, cardBackTexture, cardFrontTexture);
+	displayBoard(window, frameTexture, board);
 
-	window.display();
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
+			/*
+			if (event.type ==sf::Event::KeyPressed) {
+				window.clear();
+				board[0][0].flipFront();
+				displayBoard(window, frameTexture, board);
+			}
+			*/
 		}
 	}
 	return 0;
