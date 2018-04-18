@@ -115,13 +115,13 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
-			/*
-			if (event.type ==sf::Event::KeyPressed) {
+			if (event.type == sf::Event::KeyPressed) {
+				std::cout << "T'as appuyé sur une touche" << std::endl;
 				window.clear();
-				board[0][0].flipFront();
+				board[0][0].getShape().setTexture(&cardBackTexture);
+				board[0][0].getShape().setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
 				displayBoard(window, frameTexture, board);
 			}
-			*/
 		}
 	}
 	return 0;
