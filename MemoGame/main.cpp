@@ -51,7 +51,7 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			c.setBack(cardBackTexture);
 			c.setFront(cardFrontTexture[d(cardFrontTexture.size())-1]);
 			c.getShape().setTexture(&c.getFront());
-			board[i].push_back(c);
+			board[i][j] = c;
 		}
 	}
 	return board;
