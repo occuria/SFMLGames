@@ -2,16 +2,11 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <random>
+#include "Card.h"
 
 constexpr int width = 1600;
 constexpr int height = 900;
 constexpr float spacing = 1.5;
-
-struct Card {
-	sf::RectangleShape shape;
-	sf::Texture back;
-	sf::Texture front;
-};
 
 /* allows random draws */
 int d(int const nbSides)
@@ -52,10 +47,10 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			r.setOutlineColor(sf::Color::Black);
 			/* Creates a card and adds it to the card matrix */
 			Card c;
-			c.shape = r;
-			c.back = cardBackTexture;
-			c.front = (cardFrontTexture[d(cardFrontTexture.size())-1]);
-			c.shape.setTexture(&c.front);
+			c.setShape(r);
+			c.setBack(cardBackTexture);
+			c.setFront(cardFrontTexture[d(cardFrontTexture.size())-1]);
+			c.getShape().setTexture(&c.getFront());
 			board[i].push_back(c);
 		}
 	}
@@ -73,7 +68,7 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	/* Displays cards */
 	for (unsigned int i=0; i<board.size(); i++) {
 		for (Card c : board[i]) {
-			window.draw(c.shape);
+			window.draw(c.getShape());
 		}
 	}
 	window.display();
