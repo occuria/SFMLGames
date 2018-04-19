@@ -116,15 +116,18 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
-			/*
 			if (event.type == sf::Event::KeyPressed) {
 				std::cout << "T'as appuyé sur une touche" << std::endl;
 				window.clear();
-				board[0][0].getShape().setTexture(&cardBackTexture);
-				board[0][0].getShape().setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
+				if (board[0][0].getUpturned()) {
+					board[0][0].flipOver(cardBackTexture);
+					board[0][0].setUpturned(false);
+				} else {
+					board[0][0].flipOver(cardFrontTexture[board[0][0].getFid()]);
+					board[0][0].setUpturned(true);
+				}
 				displayBoard(window, frameTexture, board);
 			}
-			*/
 		}
 	}
 	return 0;
