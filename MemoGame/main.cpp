@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <random>
+#include <map>
 #include "Card.h"
 
 constexpr int width = 1600;
@@ -30,7 +31,7 @@ std::vector<float> getCardSize(const int nbX, int nbY, const int width, const in
 }
 
 /* Generates the board in function of the number of cards */
-std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture, const std::vector<sf::Texture> cardFrontTexture)
+std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture, const std::map<int, sf::Texture> cardFrontTexture)
 {
 	std::vector<std::vector<Card>> board;
 	float cardSize = getCardSize(nbX, nbY, width, height)[0];
@@ -96,12 +97,12 @@ int main() {
 	cardBackTexture.setSmooth(true);
 
 	/* Adds the card front textures vector */
-	std::vector<sf::Texture> cardFrontTexture;
+	std::map<int, sf::Texture> cardFrontTexture;
 	for (int i=0; i<9; i++) {
 		sf::Texture t;
 		t.loadFromFile("./Images/MandalaCards/Card" + std::to_string(i+1) +".png");
 		std::cout << "./Images/MandalaCards/Card" + std::to_string(i+1) +".png" << std::endl;
-		cardFrontTexture.push_back(t);
+		cardFrontTexture[i] = t;
 	}
 
 	/* Displays the board of cards */
