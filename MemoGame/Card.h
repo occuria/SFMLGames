@@ -7,21 +7,20 @@ class Card
 {
 	public:
 		
-		//Card(sf::RectangleShape s, sf::Texture b, sf::Texture f);
+		Card(sf::RectangleShape s, int id);
+		void flipOver(const sf::Texture &t);
 		sf::RectangleShape &getShape();
-		sf::Texture &getBack();
-		sf::Texture &getFront();
-		void setShape(sf::RectangleShape r);
-		void setBack(sf::Texture t);
-		void setFront(sf::Texture t);
-		void flipBack();
-		void flipFront();
+		int getFid();
+		bool getUpturned();
+		//void setShape(sf::RectangleShape r);
+		void setUpturned(bool u);
 
 	private:
 
-		sf::Texture back;
-		sf::Texture front;
 		sf::RectangleShape shape;
+		int fid;
+		bool upturned;
+
 };
 
 #endif

@@ -1,42 +1,42 @@
 #include "Card.h"
+#include <iostream>
+
+Card::Card(sf::RectangleShape s, int id)
+{
+	shape = s;
+	fid = id;
+	upturned = false;
+}
+
+void Card::flipOver(const sf::Texture &t)
+{
+	shape.setTexture(&t);
+	shape.setTextureRect(sf::IntRect(0, 0, t.getSize().x, t.getSize().y));
+}
 
 sf::RectangleShape &Card::getShape()
 {
 	return shape;
 }
 
-sf::Texture &Card::getBack()
+int Card::getFid()
 {
-	return back;
+	return fid;
 }
 
-sf::Texture &Card::getFront()
+bool Card::getUpturned()
 {
-	return front;
+	return upturned;
 }
 
+/*
 void Card::setShape(sf::RectangleShape r)
 {
 	shape = r;
 }
+*/
 
-void Card::setBack(sf::Texture t)
+void Card::setUpturned(bool u)
 {
-	back = t;
-}
-
-void Card::setFront(sf::Texture t)
-{
-	front = t;
-}
-
-void Card::flipBack()
-{
-	sf::Texture t = back;
-	shape.setTexture(&t);
-}
-
-void Card::flipFront()
-{
-	shape.setTexture(&front);
+	upturned = u;
 }

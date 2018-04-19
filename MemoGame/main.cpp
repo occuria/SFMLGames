@@ -32,27 +32,27 @@ std::vector<float> getCardSize(const int nbX, int nbY, const int width, const in
 /* Generates the board in function of the number of cards */
 std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture, const std::vector<sf::Texture> cardFrontTexture)
 {
-	std::vector<std::vector<Card>> board(nbX, std::vector<Card>(nbY));
+	std::vector<std::vector<Card>> board;
 	float cardSize = getCardSize(nbX, nbY, width, height)[0];
 	float spacingSize = getCardSize(nbX, nbY, width, height)[1];
 	float offsetX = (width-nbX*cardSize-(nbX-1)*spacingSize)/2;
 	float offsetY = (height-nbY*cardSize-(nbY-1)*spacingSize)/2;
 
 	for (int i=0; i<nbX; i++) {
+		std::vector<Card> v;
 		for (int j=0; j<nbY; j++) {
 			/* Creates a card shape and sets its position on the board */
-			sf::RectangleShape r(sf::Vector2f(cardSize, cardSize));
-			r.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
-			r.setOutlineThickness(1);
-			r.setOutlineColor(sf::Color::Black);
+			sf::RectangleShape s(sf::Vector2f(cardSize, cardSize));
+			s.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
+			s.setOutlineThickness(1);
+			s.setOutlineColor(sf::Color::Black);
 			/* Creates a card and adds it to the card matrix */
-			Card c;
-			c.setShape(r);
-			c.setBack(cardBackTexture);
-			c.setFront(cardFrontTexture[d(cardFrontTexture.size())-1]);
-			c.getShape().setTexture(&c.getFront());
-			board[i][j] = c;
+			int id = d(cardFrontTexture.size())-1;
+			Card c(s, id);
+			c.flipOver(cardBackTexture);
+			v.push_back(c);
 		}
+		board.push_back(v);
 	}
 	return board;
 }
@@ -115,6 +115,7 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
+			/*
 			if (event.type == sf::Event::KeyPressed) {
 				std::cout << "T'as appuyé sur une touche" << std::endl;
 				window.clear();
@@ -122,6 +123,7 @@ int main() {
 				board[0][0].getShape().setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
 				displayBoard(window, frameTexture, board);
 			}
+			*/
 		}
 	}
 	return 0;
