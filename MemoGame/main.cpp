@@ -113,20 +113,48 @@ int main() {
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window.close();
-			}
-			if (event.type == sf::Event::KeyPressed) {
-				std::cout << "T'as appuyé sur une touche" << std::endl;
-				window.clear();
-				if (board[0][0].getUpturned()) {
-					board[0][0].flipOver(cardBackTexture);
-					board[0][0].setUpturned(false);
-				} else {
-					board[0][0].flipOver(cardFrontTexture[board[0][0].getFid()]);
-					board[0][0].setUpturned(true);
-				}
-				displayBoard(window, frameTexture, board);
+			switch(event.type) {
+				case sf::Event::Closed:
+					{
+						window.close();
+						break;
+					}
+
+				case sf::Event::KeyPressed:
+					{
+						window.clear();
+						if (board[0][0].getUpturned()) {
+							board[0][0].flipOver(cardBackTexture);
+							board[0][0].setUpturned(false);
+						} else {
+							board[0][0].flipOver(cardFrontTexture[board[0][0].getFid()]);
+							board[0][0].setUpturned(true);
+						}
+						displayBoard(window, frameTexture, board);
+						break;
+					}
+				case sf::Event::MouseButtonPressed:
+					{
+						if (event.mouseButton.button == sf::Mouse::Left) {
+							std::cout << "Left click" << std::endl;
+							int i=0;
+							while (!board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
+								i++;
+							}
+							std::cout << "board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
+							window.clear();
+							if (board[i/3][i%3].getUpturned()) {
+								board[i/3][i%3].flipOver(cardBackTexture);
+								board[i/3][i%3].setUpturned(false);
+							} else {
+								board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]);
+								board[i/3][i%3].setUpturned(true);
+							}
+							displayBoard(window, frameTexture, board);
+						}
+						break;
+					}
+				default: break;
 			}
 		}
 	}
