@@ -14,7 +14,7 @@ int d(int const nbSides)
 {
 	static std::random_device rd;
 	static std::default_random_engine engine(rd());
-	std::uniform_int_distribution<> distribution(1, nbSides);
+	std::uniform_int_distribution<> distribution(0, nbSides);
 	return distribution(engine);
 }
 
@@ -31,9 +31,18 @@ std::vector<float> getCardSize(const int nbX, int nbY, const int width, const in
 }
 
 /* Generates the board in function of the number of cards */
-std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture, const std::map<int, sf::Texture> cardFrontTexture)
+std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture)
 {
 	std::vector<std::vector<Card>> board;
+	/* Creates the vector to distribute card front textures */
+	std::vector<int> vid;
+	for (int i=0; i<nbX*nbY/2; i++) {
+		vid.push_back(i);
+		vid.push_back(i);
+	}
+	auto engine = std::default_random_engine{};
+	std::shuffle(std::begin(vid), std::end(vid), engine);
+	/* Calculates card size */
 	float cardSize = getCardSize(nbX, nbY, width, height)[0];
 	float spacingSize = getCardSize(nbX, nbY, width, height)[1];
 	float offsetX = (width-nbX*cardSize-(nbX-1)*spacingSize)/2;
@@ -48,8 +57,9 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			s.setOutlineThickness(1);
 			s.setOutlineColor(sf::Color::Black);
 			/* Creates a card and adds it to the card matrix */
-			int id = d(cardFrontTexture.size())-1;
-			Card c(s, id);
+			int id = i*nbY+j;
+			std::cout << std::to_string(vid[id]) << std::endl;
+			Card c(s, vid[id]);
 			c.flipOver(cardBackTexture);
 			v.push_back(c);
 		}
@@ -96,7 +106,6 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, const sf::Texture &c
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);
-	//sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game");
 
 	/* Adds the frame texture */
 	sf::Texture frameTexture;
@@ -125,19 +134,21 @@ int main() {
 
 	/* Displays the board of cards */
 	std::vector<std::vector<Card>> board;
-	board = generateBoard(6, 3, cardBackTexture, cardFrontTexture);
+	board = generateBoard(6, 3, cardBackTexture);
 	displayBoard(window, frameTexture, board);
 
+	/* Main loop */
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
 			switch(event.type) {
+				/* Closes the window */
 				case sf::Event::Closed:
 					{
 						window.close();
 						break;
 					}
-
+				/* Flips the first card over, as a test */
 				case sf::Event::KeyPressed:
 					{
 						window.clear();
@@ -151,6 +162,7 @@ int main() {
 						displayBoard(window, frameTexture, board);
 						break;
 					}
+				/* Flips a card over when clicked on */
 				case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
