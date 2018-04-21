@@ -76,6 +76,24 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	return;
 }
 
+void flipCardOnClick(std::vector<std::vector<Card>> &board, const sf::Texture &cardBackTexture, std::map<int, sf::Texture> &cardFrontTexture, sf::RenderWindow &window)
+{
+	std::cout << "Left click" << std::endl;
+	int i=0;
+	while (!board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
+		i++;
+	}
+	std::cout << "board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
+	window.clear();
+	if (board[i/3][i%3].getUpturned()) {
+		board[i/3][i%3].flipOver(cardBackTexture);
+		board[i/3][i%3].setUpturned(false);
+	} else {
+		board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]);
+		board[i/3][i%3].setUpturned(true);
+	}
+}
+
 int main() {
 	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);
 	//sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game");
@@ -136,20 +154,7 @@ int main() {
 				case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-							std::cout << "Left click" << std::endl;
-							int i=0;
-							while (!board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
-								i++;
-							}
-							std::cout << "board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
-							window.clear();
-							if (board[i/3][i%3].getUpturned()) {
-								board[i/3][i%3].flipOver(cardBackTexture);
-								board[i/3][i%3].setUpturned(false);
-							} else {
-								board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]);
-								board[i/3][i%3].setUpturned(true);
-							}
+							flipCardOnClick(board, cardBackTexture, cardFrontTexture, window);
 							displayBoard(window, frameTexture, board);
 						}
 						break;
