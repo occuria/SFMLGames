@@ -7,12 +7,13 @@
 class GameState
 {
 	public:
+		GameState();
 		
 	private:
 		enum State {TurnStart, FirstCardFlip, SecondCardFlip, TurnEnd};
 		State state;
-		Card FirstCard;
-		Card SecondCard;
+		Card firstCard;
+		Card secondCard;
 
 };
 

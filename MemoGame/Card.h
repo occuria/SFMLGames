@@ -7,6 +7,7 @@ class Card
 {
 	public:
 		
+		Card();
 		Card(sf::RectangleShape s, int id);
 		void flipOver(const sf::Texture &t);
 		sf::RectangleShape &getShape();

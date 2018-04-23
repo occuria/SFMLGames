@@ -1,6 +1,11 @@
 #include "Card.h"
 #include <iostream>
 
+Card::Card()
+{
+	upturned = false;
+}
+
 Card::Card(sf::RectangleShape s, int id)
 {
 	shape = s;

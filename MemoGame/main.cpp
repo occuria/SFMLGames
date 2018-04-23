@@ -4,6 +4,7 @@
 #include <random>
 #include <map>
 #include "Card.h"
+#include "GameState.h"
 
 constexpr int width = 1600;
 constexpr int height = 900;
@@ -89,8 +90,8 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 void flipCardOnClick(std::vector<std::vector<Card>> &board, const sf::Texture &cardBackTexture, std::map<int, sf::Texture> &cardFrontTexture, sf::RenderWindow &window)
 {
 	std::cout << "Left click" << std::endl;
-	int i=0;
-	while (!board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
+	unsigned int i=0;
+	while (!board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y) && i<board.size()*board[0].size()) {
 		i++;
 	}
 	std::cout << "board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
@@ -137,6 +138,9 @@ int main() {
 	board = generateBoard(6, 3, cardBackTexture);
 	displayBoard(window, frameTexture, board);
 
+	/* Initializes the game state */
+	GameState state;
+
 	/* Main loop */
 	while (window.isOpen()) {
 		sf::Event event;
@@ -171,7 +175,10 @@ int main() {
 						}
 						break;
 					}
-				default: break;
+				default:
+					{
+						break;
+					}
 			}
 		}
 	}
