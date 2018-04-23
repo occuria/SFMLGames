@@ -59,7 +59,6 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			s.setOutlineColor(sf::Color::Black);
 			/* Creates a card and adds it to the card matrix */
 			int id = i*nbY+j;
-			std::cout << std::to_string(vid[id]) << std::endl;
 			Card c(s, vid[id]);
 			c.flipOver(cardBackTexture);
 			v.push_back(c);
@@ -91,10 +90,15 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, const sf::Texture &c
 {
 	std::cout << "Left click" << std::endl;
 	unsigned int i=0;
-	while (!board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y) && i<board.size()*board[0].size()) {
+	while (i<board.size()*board[0].size() && !board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
 		i++;
 	}
-	std::cout << "board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
+	if (i == board.size()*board[0].size()) {
+		std::cout << "Click on blank" << std::endl;
+		window.clear();
+		return;
+	}
+	std::cout << "Clik on board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
 	window.clear();
 	if (board[i/3][i%3].getUpturned()) {
 		board[i/3][i%3].flipOver(cardBackTexture);
@@ -103,6 +107,7 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, const sf::Texture &c
 		board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]);
 		board[i/3][i%3].setUpturned(true);
 	}
+	return;
 }
 
 int main() {
@@ -129,7 +134,7 @@ int main() {
 	for (int i=0; i<9; i++) {
 		sf::Texture t;
 		t.loadFromFile("./Images/MandalaCards/Card" + std::to_string(i+1) +".png");
-		std::cout << "./Images/MandalaCards/Card" + std::to_string(i+1) +".png" << std::endl;
+		std::cout << "Loading card texture from ./Images/MandalaCards/Card" + std::to_string(i+1) +".png" << std::endl;
 		cardFrontTexture[i] = t;
 	}
 
@@ -140,6 +145,7 @@ int main() {
 
 	/* Initializes the game state */
 	GameState state;
+	std::cout << "Game state initialized" << std::endl;
 
 	/* Main loop */
 	while (window.isOpen()) {
@@ -176,9 +182,7 @@ int main() {
 						break;
 					}
 				default:
-					{
 						break;
-					}
 			}
 		}
 	}
