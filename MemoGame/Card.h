@@ -9,18 +9,19 @@ class Card
 		
 		Card();
 		Card(sf::RectangleShape s, int id);
-		void flipOver(const sf::Texture &t);
+		int flipOver(const sf::Texture &t);
+		int flipBack(const sf::Texture &t);
 		sf::RectangleShape &getShape();
 		int getFid();
-		bool getUpturned();
-		//void setShape(sf::RectangleShape r);
-		void setUpturned(bool u);
+		void pair();
+		void unpair();
+		bool isPaired();
 
 	private:
 
 		sf::RectangleShape shape;
 		int fid;
-		bool upturned;
+		bool paired;
 
 };
 

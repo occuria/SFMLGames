@@ -57,10 +57,11 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			s.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
 			s.setOutlineThickness(1);
 			s.setOutlineColor(sf::Color::Black);
+			s.setTexture(&cardBackTexture);
+			s.setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
 			/* Creates a card and adds it to the card matrix */
 			int id = i*nbY+j;
 			Card c(s, vid[id]);
-			c.flipOver(cardBackTexture);
 			v.push_back(c);
 		}
 		board.push_back(v);
@@ -86,26 +87,67 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	return;
 }
 
-void flipCardOnClick(std::vector<std::vector<Card>> &board, const sf::Texture &cardBackTexture, std::map<int, sf::Texture> &cardFrontTexture, sf::RenderWindow &window)
+int allCardsPaired(std::vector<std::vector<Card>> board)
 {
-	std::cout << "Left click" << std::endl;
+	int res = 0;
+	for (auto i : board) {
+		for (auto j : i) {
+			if (!j.isPaired()) {
+				res += -1;
+			}
+		}
+	}
+	return res;
+}
+
+/* Click management */
+void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
+{
 	unsigned int i=0;
 	while (i<board.size()*board[0].size() && !board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
 		i++;
 	}
-	if (i == board.size()*board[0].size()) {
-		std::cout << "Click on blank" << std::endl;
-		window.clear();
-		return;
-	}
-	std::cout << "Clik on board[" << std::to_string(i/3) << "][" << std::to_string(i%3) << "]" << std::endl;
-	window.clear();
-	if (board[i/3][i%3].getUpturned()) {
-		board[i/3][i%3].flipOver(cardBackTexture);
-		board[i/3][i%3].setUpturned(false);
-	} else {
-		board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]);
-		board[i/3][i%3].setUpturned(true);
+	std::cout << "Game state: " << state.getState() << std::endl;
+	switch (state.getState()) {
+		case GameState::FirstCard:
+			{
+				std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
+				window.clear();
+				/* Click on blank */
+				if (i == board.size()*board[0].size()) {
+					return;
+				}
+				/* Click on card */
+				if (board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]) < 0) {
+					return;
+				}
+				state.flipFirstCard(i/3, i%3, board[i/3][i%3].getFid());
+				board[i/3][i%3].pair();
+				break;
+			}
+		case GameState::SecondCard:
+			{
+				window.clear();
+				/* Click on blank */
+				if (i == board.size()*board[0].size()) {
+					return;
+				}
+				/* Click on card */
+				if (board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]) < 0) {
+					return;
+				}
+				state.flipSecondCard(i/3, i%3, board[i/3][i%3].getFid());
+				break;
+			}
+		case GameState::pending:
+			{
+				if (state.endTurn() > 0) {
+					std::vector<int> cards = state.getCards();
+					board[cards[0]][cards[1]].flipBack(cardBackTexture);
+					board[cards[2]][cards[3]].flipBack(cardBackTexture);
+				}
+				break;
+			}
 	}
 	return;
 }
@@ -146,6 +188,10 @@ int main() {
 	/* Initializes the game state */
 	GameState state;
 	std::cout << "Game state initialized" << std::endl;
+	if (state.getState() == GameState::FirstCard) {
+		std::cout << "Game is in FirstCard state after initialization" << std::endl;
+		std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
+	}
 
 	/* Main loop */
 	while (window.isOpen()) {
@@ -158,31 +204,17 @@ int main() {
 						window.close();
 						break;
 					}
-				/* Flips the first card over, as a test */
-				case sf::Event::KeyPressed:
-					{
-						window.clear();
-						if (board[0][0].getUpturned()) {
-							board[0][0].flipOver(cardBackTexture);
-							board[0][0].setUpturned(false);
-						} else {
-							board[0][0].flipOver(cardFrontTexture[board[0][0].getFid()]);
-							board[0][0].setUpturned(true);
-						}
-						displayBoard(window, frameTexture, board);
-						break;
-					}
 				/* Flips a card over when clicked on */
 				case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-							flipCardOnClick(board, cardBackTexture, cardFrontTexture, window);
+							flipCardOnClick(board, cardFrontTexture, cardBackTexture, window, state);
 							displayBoard(window, frameTexture, board);
 						}
 						break;
 					}
 				default:
-						break;
+					break;
 			}
 		}
 	}
