@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <algorithm>
 #include <random>
 #include <map>
@@ -192,6 +193,15 @@ int main() {
 		std::cout << "Game is in FirstCard state after initialization" << std::endl;
 		std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
 	}
+
+	/* Loads the music */
+	sf::Music music;
+	if (!music.openFromFile("./Music/music.wav")) {
+		std::cout << "Error opening music file" << std::endl;
+		abort();
+	}
+	music.setLoop(true);
+	music.play();
 
 	/* Main loop */
 	while (window.isOpen()) {

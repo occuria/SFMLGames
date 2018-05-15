@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -lsfml-graphics -lsfml-window -lsfml-system
+CFLAGS=-Wall -Werror -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 all: memo
 
