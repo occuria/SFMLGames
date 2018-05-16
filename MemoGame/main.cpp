@@ -220,6 +220,14 @@ int main() {
 						if (event.mouseButton.button == sf::Mouse::Left) {
 							flipCardOnClick(board, cardFrontTexture, cardBackTexture, window, state);
 							displayBoard(window, frameTexture, board);
+							/* Checks if teh second card has been flipped over */
+							if (state.endTurn() > 0) {
+								sf::sleep(sf::seconds(2));
+								std::vector<int> cards = state.getCards();
+								board[cards[0]][cards[1]].flipBack(cardBackTexture);
+								board[cards[2]][cards[3]].flipBack(cardBackTexture);
+							}
+							displayBoard(window, frameTexture, board);
 						}
 						break;
 					}

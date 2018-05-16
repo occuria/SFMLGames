@@ -53,7 +53,7 @@ int GameState::endTurn()
 {
 	int res;
 	if (state != pending) {
-		std::cout << "Game must be in FirstCard state" << std::endl;
+		std::cout << "Game must be in pending state" << std::endl;
 		return -1;
 	}
 	if (secondCard[2] == firstCard[2]) {
