@@ -1,2 +1,5 @@
 #ignore YouCompleteMe configuration file
 .ycm*.py
+
+#ignore music files
+*.wav
