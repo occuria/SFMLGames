@@ -7,9 +7,9 @@
 #include "Card.h"
 #include "GameState.h"
 
-constexpr int width = 1600;
-constexpr int height = 900;
-constexpr float spacing = 1.5;
+const int width = 1600;
+const int height = 900;
+const float spacing = 1.5;
 
 /* allows random draws */
 int d(int const nbSides)
@@ -71,6 +71,19 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 	return board;
 }
 
+/* Returns useful board dimensions */
+std::vector<float> getBoardDimensions(std::vector<std::vector<Card>> board)
+{
+	int nbX = board.size();
+	int nbY = board[0].size();
+	float cardSize = getCardSize(nbX, nbY, width, height)[0];
+	float spacingSize = getCardSize(nbX, nbY, width, height)[1];
+	float offsetX = (width-nbX*cardSize-(nbX-1)*spacingSize)/2;
+	float offsetY = (height-nbY*cardSize-(nbY-1)*spacingSize)/2;
+	std::vector<float> dimensions = {cardSize, spacingSize, offsetX, offsetY};
+	return dimensions;
+}
+
 /* Displays a board of cards */
 void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vector<std::vector<Card>> board)
 {
@@ -79,6 +92,19 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	frame.setTexture(&frameTexture);
 	frame.setTextureRect(sf::IntRect(0,0,width,height));
 	window.draw(frame);
+	/* Displays restart button */
+	sf::Texture restart_b_t;
+	if (!restart_b_t.loadFromFile("./Images/restart.png")) {
+		std::cout << "Error opening restart button texture file" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	restart_b_t.setSmooth(true);
+	sf::Sprite restart_b;
+	restart_b.setTexture(restart_b_t);
+	restart_b.setColor(sf::Color(50,0,100));
+	restart_b.setPosition(50,50);
+	restart_b.setScale(0.5,0.5);
+	window.draw(restart_b);
 	/* Displays cards */
 	for (unsigned int i=0; i<board.size(); i++) {
 		for (Card c : board[i]) {
