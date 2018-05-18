@@ -56,10 +56,11 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			/* Creates a card shape and sets its position on the board */
 			sf::RectangleShape s(sf::Vector2f(cardSize, cardSize));
 			s.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
-			s.setOutlineThickness(1);
-			s.setOutlineColor(sf::Color::Black);
+			//s.setOutlineThickness(1);
+			//s.setOutlineColor(sf::Color::Black);
 			s.setTexture(&cardBackTexture);
 			s.setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
+			s.setFillColor(sf::Color(50,0,100));
 			/* Creates a card and adds it to the card matrix */
 			int id = i*nbY+j;
 			Card c(s, vid[id]);
@@ -105,7 +106,7 @@ int allCardsPaired(std::vector<std::vector<Card>> board)
 void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
 {
 	unsigned int i=0;
-	while (i<board.size()*board[0].size() && !board[i/3][i%3].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
+	while (i<board.size()*board[0].size() && !board[i/board[0].size()][i%board[0].size()].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
 		i++;
 	}
 	std::cout << "Game state: " << state.getState() << std::endl;
@@ -119,11 +120,11 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Te
 					return;
 				}
 				/* Click on card */
-				if (board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]) < 0) {
+				if (board[i/board[0].size()][i%board[0].size()].flipOver(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()]) < 0) {
 					return;
 				}
-				state.flipFirstCard(i/3, i%3, board[i/3][i%3].getFid());
-				board[i/3][i%3].pair();
+				state.flipFirstCard(i/board[0].size(), i%board[0].size(), board[i/board[0].size()][i%board[0].size()].getFid());
+				board[i/board[0].size()][i%board[0].size()].pair();
 				break;
 			}
 		case GameState::SecondCard:
@@ -134,10 +135,10 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Te
 					return;
 				}
 				/* Click on card */
-				if (board[i/3][i%3].flipOver(cardFrontTexture[board[i/3][i%3].getFid()]) < 0) {
+				if (board[i/board[0].size()][i%board[0].size()].flipOver(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()]) < 0) {
 					return;
 				}
-				state.flipSecondCard(i/3, i%3, board[i/3][i%3].getFid());
+				state.flipSecondCard(i/board[0].size(), i%board[0].size(), board[i/board[0].size()][i%board[0].size()].getFid());
 				break;
 			}
 		case GameState::pending:
@@ -158,32 +159,37 @@ int main() {
 
 	/* Adds the frame texture */
 	sf::Texture frameTexture;
-	if (!frameTexture.loadFromFile("./Images/Board.jpg")) {
+	if (!frameTexture.loadFromFile("./Images/Background.png")) {
 		std::cout << "Error opening frame texture file" << std::endl;
-		abort();
+		exit(EXIT_FAILURE);
 	}
 	frameTexture.setRepeated(true);
 
 	/* Adds the card back texture */
 	sf::Texture cardBackTexture;
-	if (!cardBackTexture.loadFromFile("./Images/MandalaCards/CardBack.jpg")) {
+	if (!cardBackTexture.loadFromFile("./Images/CardBack.png")) {
 		std::cout << "Error opening card back texture file" << std::endl;
-		abort();
+		exit(EXIT_FAILURE);
 	}
 	cardBackTexture.setSmooth(true);
 
 	/* Adds the card front textures vector */
 	std::map<int, sf::Texture> cardFrontTexture;
-	for (int i=0; i<9; i++) {
+	std::vector <std::string> cardFronts {"giraffe", "hippo", "monkey", "penguin", "panda", "parrot", "pig", "rabbit", "snake", "elephant"};
+	int j=0;
+	for (auto i : cardFronts) {
 		sf::Texture t;
-		t.loadFromFile("./Images/MandalaCards/Card" + std::to_string(i+1) +".png");
-		std::cout << "Loading card texture from ./Images/MandalaCards/Card" + std::to_string(i+1) +".png" << std::endl;
-		cardFrontTexture[i] = t;
+		if (!t.loadFromFile("./Images/CardFronts/" + i + ".png")) {
+			exit(EXIT_FAILURE);
+		}
+		t.setSmooth(true);
+		cardFrontTexture[j] = t;
+		j++;
 	}
 
 	/* Displays the board of cards */
 	std::vector<std::vector<Card>> board;
-	board = generateBoard(6, 3, cardBackTexture);
+	board = generateBoard(5, 4, cardBackTexture);
 	displayBoard(window, frameTexture, board);
 
 	/* Initializes the game state */
