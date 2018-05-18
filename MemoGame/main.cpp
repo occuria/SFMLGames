@@ -11,15 +11,6 @@ const int width = 1600;
 const int height = 900;
 const float spacing = 1.5;
 
-/* allows random draws */
-int d(int const nbSides)
-{
-	static std::random_device rd;
-	static std::default_random_engine engine(rd());
-	std::uniform_int_distribution<> distribution(0, nbSides);
-	return distribution(engine);
-}
-
 /* returns card size and card spacing in function of board size and number of cards */
 std::vector<float> getCardSize(const int nbX, int nbY, const int width, const int height)
 {
@@ -42,8 +33,8 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 		vid.push_back(i);
 		vid.push_back(i);
 	}
-	auto engine = std::default_random_engine{};
-	std::shuffle(std::begin(vid), std::end(vid), engine);
+	std::srand(std::time(0));
+	std::random_shuffle(std::begin(vid),std::end(vid));
 	/* Calculates card size */
 	float cardSize = getCardSize(nbX, nbY, width, height)[0];
 	float spacingSize = getCardSize(nbX, nbY, width, height)[1];
@@ -56,8 +47,6 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			/* Creates a card shape and sets its position on the board */
 			sf::RectangleShape s(sf::Vector2f(cardSize, cardSize));
 			s.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
-			//s.setOutlineThickness(1);
-			//s.setOutlineColor(sf::Color::Black);
 			s.setTexture(&cardBackTexture);
 			s.setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
 			s.setFillColor(sf::Color(50,0,100));
