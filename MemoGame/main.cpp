@@ -88,11 +88,11 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 		exit(EXIT_FAILURE);
 	}
 	restart_b_t.setSmooth(true);
-	sf::Sprite restart_b;
-	restart_b.setTexture(restart_b_t);
-	restart_b.setColor(sf::Color(50,0,100));
+	sf::RectangleShape restart_b;
+	restart_b.setTexture(&restart_b_t);
+	restart_b.setFillColor(sf::Color(50,0,100));
 	restart_b.setPosition(50,50);
-	restart_b.setScale(0.5,0.5);
+	restart_b.setSize(sf::Vector2f(getBoardDimensions(board)[0]/2,getBoardDimensions(board)[0]/2));
 	window.draw(restart_b);
 	/* Displays cards */
 	for (unsigned int i=0; i<board.size(); i++) {
@@ -216,6 +216,7 @@ int main() {
 	}
 
 	/* Loads the music */
+	/*
 	sf::Music music;
 	if (!music.openFromFile("./Music/music.wav")) {
 		std::cout << "Error opening music file" << std::endl;
@@ -223,6 +224,7 @@ int main() {
 	}
 	music.setLoop(true);
 	music.play();
+	*/
 
 	/* Main loop */
 	while (window.isOpen()) {
@@ -241,7 +243,7 @@ int main() {
 						if (event.mouseButton.button == sf::Mouse::Left) {
 							flipCardOnClick(board, cardFrontTexture, cardBackTexture, window, state);
 							displayBoard(window, frameTexture, board);
-							/* Checks if teh second card has been flipped over */
+							/* Checks if the second card has been flipped over */
 							if (state.endTurn() > 0) {
 								sf::sleep(sf::seconds(1));
 								std::vector<int> cards = state.getCards();
