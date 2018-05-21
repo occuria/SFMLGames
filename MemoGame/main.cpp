@@ -11,6 +11,8 @@ const int width = 1600;
 const int height = 900;
 const float spacing = 1.5;
 
+enum Buttons { restart };
+
 /* returns card size and card spacing in function of board size and number of cards */
 std::vector<float> getCardSize(const int nbX, int nbY, const int width, const int height)
 {
@@ -60,6 +62,17 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 	return board;
 }
 
+/* Generates the entity vector, to simplify click management */
+std::map<int, sf::RectangleShape> generateEntities(std::vector<std::vector<Card>> board)
+{
+	std::map<int, sf::RectangleShape> entities;
+	for (unsigned int i=0; i<board.size()*board[0].size(); i++) {
+		entities[i] = board[i/board[0].size()][i%board[0].size()].getShape();
+	}
+	return entities;
+}
+
+
 /* Returns useful board dimensions */
 std::vector<float> getBoardDimensions(std::vector<std::vector<Card>> board)
 {
@@ -74,8 +87,9 @@ std::vector<float> getBoardDimensions(std::vector<std::vector<Card>> board)
 }
 
 /* Displays a board of cards */
-void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vector<std::vector<Card>> board)
+void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vector<std::vector<Card>> board, std::map<int, sf::RectangleShape> entities)
 {
+	int i = board.size()*board[0].size();
 	/* Displays the frame */
 	sf::RectangleShape frame(sf::Vector2f(width, height));
 	frame.setTexture(&frameTexture);
@@ -93,6 +107,9 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	restart_b.setFillColor(sf::Color(50,0,100));
 	restart_b.setPosition(50,50);
 	restart_b.setSize(sf::Vector2f(getBoardDimensions(board)[0]/2,getBoardDimensions(board)[0]/2));
+	if (entities.find(i) == entities.end()) {
+		entities[i] = restart_b;
+	}
 	window.draw(restart_b);
 	/* Displays cards */
 	for (unsigned int i=0; i<board.size(); i++) {
@@ -117,23 +134,14 @@ int allCardsPaired(std::vector<std::vector<Card>> board)
 	return res;
 }
 
-/* Click management */
-void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
+void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
 {
-	unsigned int i=0;
-	while (i<board.size()*board[0].size() && !board[i/board[0].size()][i%board[0].size()].getShape().getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)) {
-		i++;
-	}
 	std::cout << "Game state: " << state.getState() << std::endl;
 	switch (state.getState()) {
 		case GameState::FirstCard:
 			{
 				std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
 				window.clear();
-				/* Click on blank */
-				if (i == board.size()*board[0].size()) {
-					return;
-				}
 				/* Click on card */
 				if (board[i/board[0].size()][i%board[0].size()].flipOver(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()]) < 0) {
 					return;
@@ -145,10 +153,6 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Te
 		case GameState::SecondCard:
 			{
 				window.clear();
-				/* Click on blank */
-				if (i == board.size()*board[0].size()) {
-					return;
-				}
 				/* Click on card */
 				if (board[i/board[0].size()][i%board[0].size()].flipOver(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()]) < 0) {
 					return;
@@ -169,8 +173,27 @@ void flipCardOnClick(std::vector<std::vector<Card>> &board, std::map<int, sf::Te
 	return;
 }
 
+/* Click management */
+void manageClick(std::map<int, sf::RectangleShape> entities, std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
+{
+	unsigned int i=0;
+	while (i<entities.size() && !entities[i].getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y))
+	{
+		i++;
+	}
+	/* Click on card */
+	if (i<board.size()*board[0].size()) {
+		flipCardOnClick(i, board, cardFrontTexture, cardBackTexture, window, state);
+	/* Click on button */
+	} else if (i<entities.size() && i>=board.size()*board[0].size()) {
+		//exec button function
+	}
+	/* else : Click on blank */
+}
+
 int main() {
 	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);
+	std::cout << "Window created" << std::endl;
 
 	/* Adds the frame texture */
 	sf::Texture frameTexture;
@@ -202,10 +225,12 @@ int main() {
 		j++;
 	}
 
-	/* Displays the board of cards */
+	/* Generates and displays the board of cards */
 	std::vector<std::vector<Card>> board;
 	board = generateBoard(5, 4, cardBackTexture);
-	displayBoard(window, frameTexture, board);
+	std::map<int, sf::RectangleShape> entities;
+	entities = generateEntities(board);
+	displayBoard(window, frameTexture, board, entities);
 
 	/* Initializes the game state */
 	GameState state;
@@ -241,15 +266,15 @@ int main() {
 				case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-							flipCardOnClick(board, cardFrontTexture, cardBackTexture, window, state);
-							displayBoard(window, frameTexture, board);
+							manageClick(entities, board, cardFrontTexture, cardBackTexture, window, state);
+							displayBoard(window, frameTexture, board, entities);
 							/* Checks if the second card has been flipped over */
 							if (state.endTurn() > 0) {
 								sf::sleep(sf::seconds(1));
 								std::vector<int> cards = state.getCards();
 								board[cards[0]][cards[1]].flipBack(cardBackTexture);
 								board[cards[2]][cards[3]].flipBack(cardBackTexture);
-								displayBoard(window, frameTexture, board);
+								displayBoard(window, frameTexture, board, entities);
 							}
 						}
 						break;
