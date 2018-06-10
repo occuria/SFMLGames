@@ -3,13 +3,13 @@
 
 #include "Character.hpp"
 
-class PlayableCharacter: Character
+class PlayableCharacter: public Character
 {
 	private:
 
 	public:
 		
-		PlayableCharacter(std::string name);
+		PlayableCharacter(std::string, std::vector<Ability *>);
 		void move(int cellId);
 
 };

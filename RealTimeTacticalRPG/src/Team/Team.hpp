@@ -11,12 +11,14 @@ class Team
 	private:
 
 		std::string name;
-		std::vector<Character> characters;
+		std::vector<Character *> characters;
 
 	public:
-
+		
+		Team(std::string, std::vector<Character *>);
+		void display();
 		std::string getName();
-		std::vector<Character> getCharacters();
+		std::vector<Character *> getCharacters();
 };
 
 #endif

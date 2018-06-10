@@ -15,6 +15,7 @@ class Cell
 	public:
 		
 		Cell();
+		void display();
 		int getId();
 		bool isOccupied();
 };

@@ -11,13 +11,14 @@ class Character
 	private:
 
 		std::string name;
-		std::vector<Ability> abilities;
+		std::vector<Ability *> abilities;
 		int maxHealth;
 		int curHealth;
 
 	public:
 		
-		Character(std::string name);
+		Character(std::string, std::vector<Ability *>);
+		void display();
 		std::string getName();
 		int getMaxHealth();
 		int getCurHealth();

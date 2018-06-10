@@ -10,6 +10,8 @@ Cell::Cell()
 	type = CellType::Free;
 }
 
+void Cell::display() {}
+
 int Cell::getId() { return id; }
 
 bool Cell::isOccupied() { return occupied; }

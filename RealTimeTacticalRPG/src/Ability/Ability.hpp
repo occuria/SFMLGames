@@ -15,6 +15,7 @@ class Ability
 
 	public:
 
+		Ability(std::string, int, int, int, int);
 		std::string getName();
 		int getRange();
 		int getDamage();
