@@ -12,6 +12,7 @@ int main()
 	holder.load(Textures::Free, "../../assets/cells/ground.png");
 	
 	sf::RenderWindow window(sf::VideoMode(width, height), "Real Time Tactical RPG", sf::Style::Fullscreen);
+	window.setFramerateLimit(60);
 
 	while (window.isOpen())
 	{
