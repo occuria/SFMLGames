@@ -1,7 +1,7 @@
 #ifndef DEF_CELL
 #define DEF_CELL
 
-#include "CellType.hpp"
+#include "../Terrain/Terrain.hpp"
 
 class Cell
 {
@@ -9,15 +9,14 @@ class Cell
 
 		int id;
 		static int globalId;
-		bool occupied;
-		CellType type;
+		Terrain &terrain;
 
 	public:
 		
-		Cell();
+		Cell(Terrain &terrain_);
 		void display();
+		TerrainType getType();
 		int getId();
-		bool isOccupied();
 };
 
 #endif

@@ -10,15 +10,15 @@ class Game
 {
 	private:
 
-		std::vector<Team *> teams;
-		std::vector<Cell *> board;
+		std::vector<Team> teams;
+		std::vector<std::vector<Cell>> board;
 
 	public:
 
-		Game(std::vector<Team *>, std::vector<Cell *>);
+		Game(std::vector<Team>, std::vector<std::vector<Cell>>);
 		void display();		
-		std::vector<Team *> getTeams();
-		std::vector<Cell *> getBoard();
+		std::vector<Team> getTeams();
+		std::vector<std::vector<Cell>> getBoard();
 };
 
 #endif

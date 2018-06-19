@@ -1,17 +1,14 @@
 #include "Cell.hpp"
-#include "CellType.hpp"
 
 int Cell::globalId = 0;
 
-Cell::Cell()
+Cell::Cell(Terrain &terrain_): terrain(terrain_)
 {
 	id = ++globalId;
-	occupied = false;
-	type = CellType::Free;
 }
 
 void Cell::display() {}
 
-int Cell::getId() { return id; }
+TerrainType Cell::getType() { return terrain.getType(); }
 
-bool Cell::isOccupied() { return occupied; }
+int Cell::getId() { return id; }
