@@ -16,7 +16,7 @@ class TextureHolder
 		}
 
 		void load(Textures::ID textureID, const std::string &filename);
-		sf::Texture &get(Textures::ID textureID);
+		sf::Texture& get(Textures::ID textureID);
 
 	private:
 
@@ -24,5 +24,5 @@ class TextureHolder
 		TextureHolder(TextureHolder const&);
 		void operator=(TextureHolder const&);
 
-		std::map<Textures::ID, std::unique_ptr<sf::Texture>> textureMap;
+		std::map<Textures::ID, sf::Texture> textureMap;
 };
