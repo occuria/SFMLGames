@@ -21,8 +21,8 @@ class TextureHolder
 	private:
 
 		TextureHolder();
-		TextureHolder(TextureHolder const&);
-		void operator=(TextureHolder const&);
+		TextureHolder(TextureHolder const&) = delete;
+		void operator=(TextureHolder const&) = delete;
 
 		std::map<Textures::ID, sf::Texture> textureMap;
 };
