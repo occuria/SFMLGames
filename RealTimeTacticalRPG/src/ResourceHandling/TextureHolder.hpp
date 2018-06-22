@@ -2,18 +2,27 @@
 
 namespace Textures
 {
-	enum ID { Free, Block };
+	enum ID { Plain, Rock, Water };
 }
 
 class TextureHolder
 {
 	public:
 
+		static TextureHolder& instance()
+		{
+			static TextureHolder instance;
+			return instance;
+		}
+
 		void load(Textures::ID textureID, const std::string &filename);
 		sf::Texture &get(Textures::ID textureID);
 
 	private:
 
-		std::map<Textures::ID, std::unique_ptr<sf::Texture>> TextureMap;
-};
+		TextureHolder();
+		TextureHolder(TextureHolder const&);
+		void operator=(TextureHolder const&);
 
+		std::map<Textures::ID, std::unique_ptr<sf::Texture>> textureMap;
+};
