@@ -26,10 +26,10 @@ class TextureHolder
     /**
      * Singleton implementation.
      */
-		static TextureHolder& get()
+		static TextureHolder* get()
 		{
 			static TextureHolder instance;
-			return instance;
+			return &instance;
 		}
     
     /**
@@ -44,9 +44,9 @@ class TextureHolder
 
 	private:
 
-		TextureHolder();
 		TextureHolder(TextureHolder const&) = delete;
 		void operator=(TextureHolder const&) = delete;
+		TextureHolder() = default;
 
 		std::map<Textures::ID, sf::Texture> textureMap;
 };

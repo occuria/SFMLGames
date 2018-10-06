@@ -14,10 +14,12 @@ const float spacing = 1.5;
 
 enum Buttons { restart };
 
-/* returns card size and card spacing in function of board size and number of cards */
+/** 
+ * Returns {card size, card spacing} in function of board size and card number.
+ * Thanks to my friend Varens who helped me find these formulas.
+ */
 std::vector<float> getCardSize(const int nbX, int nbY, const int width, const int height)
 {
-	/* Thanks to my friend Varens who gave me these formulas */
 	float cardSizeX = width / (spacing+nbX);
 	float spacingSizeX = (spacing*width)/(spacing+nbX)*1/(nbX+1);
 	float cardSizeY = height / (spacing+nbY);
@@ -26,8 +28,10 @@ std::vector<float> getCardSize(const int nbX, int nbY, const int width, const in
 	return res;
 }
 
-/* Generates the board in function of the number of cards */
-std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const sf::Texture &cardBackTexture)
+/**
+ * Generates the board in function of the card number.
+ */
+std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const Textures::ID id)
 {
 	std::vector<std::vector<Card>> board;
 	/* Creates the vector to distribute card front textures */
@@ -50,8 +54,8 @@ std::vector<std::vector<Card>> generateBoard(const int nbX, const int nbY, const
 			/* Creates a card shape and sets its position on the board */
 			sf::RectangleShape s(sf::Vector2f(cardSize, cardSize));
 			s.setPosition(offsetX+spacingSize*i+cardSize*i, offsetY+spacingSize*j+cardSize*j);
-			s.setTexture(&cardBackTexture);
-			s.setTextureRect(sf::IntRect(0, 0, cardBackTexture.getSize().x, cardBackTexture.getSize().y));
+			s.setTexture(&TextureHolder::get()->get(id));
+			s.setTextureRect(sf::IntRect(0, 0, TextureHolder::get()->get(id).getSize().x, TextureHolder::get()->get(id).getSize().y));
 			s.setFillColor(sf::Color(50,0,100));
 			/* Creates a card and adds it to the card matrix */
 			int id = i*nbY+j;
@@ -135,7 +139,7 @@ int allCardsPaired(std::vector<std::vector<Card>> board)
 	return res;
 }
 
-void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
+void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int, Textures::ID> &cardFrontTexture, Textures::ID cardBackId, sf::RenderWindow &window, GameState &state)
 {
 	std::cout << "Game state: " << state.getState() << std::endl;
 	switch (state.getState()) {
@@ -144,7 +148,7 @@ void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int,
 				std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
 				window.clear();
 				/* Click on card */
-				if (board[i/board[0].size()][i%board[0].size()].flipOver(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()]) < 0) {
+				if (board[i/board[0].size()][i%board[0].size()].flipOver(TextureHolder::get()->get(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()])) < 0) {
 					return;
 				}
 				state.flipFirstCard(i/board[0].size(), i%board[0].size(), board[i/board[0].size()][i%board[0].size()].getFid());
@@ -155,7 +159,7 @@ void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int,
 			{
 				window.clear();
 				/* Click on card */
-				if (board[i/board[0].size()][i%board[0].size()].flipOver(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()]) < 0) {
+				if (board[i/board[0].size()][i%board[0].size()].flipOver(TextureHolder::get()->get(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()])) < 0) {
 					return;
 				}
 				state.flipSecondCard(i/board[0].size(), i%board[0].size(), board[i/board[0].size()][i%board[0].size()].getFid());
@@ -165,8 +169,8 @@ void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int,
 			{
 				if (state.endTurn() > 0) {
 					std::vector<int> cards = state.getCards();
-					board[cards[0]][cards[1]].flipBack(cardBackTexture);
-					board[cards[2]][cards[3]].flipBack(cardBackTexture);
+					board[cards[0]][cards[1]].flipBack(TextureHolder::get()->get(cardBackId));
+					board[cards[2]][cards[3]].flipBack(TextureHolder::get()->get(cardBackId));
 				}
 				break;
 			}
@@ -175,7 +179,7 @@ void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int,
 }
 
 /* Click management */
-void manageClick(std::map<int, sf::RectangleShape> entities, std::vector<std::vector<Card>> &board, std::map<int, sf::Texture> &cardFrontTexture, sf::Texture &cardBackTexture, sf::RenderWindow &window, GameState &state)
+void manageClick(std::map<int, sf::RectangleShape> entities, std::vector<std::vector<Card>> &board, std::map<int, Textures::ID> &cardFrontTexture, Textures::ID cardBackTexture, sf::RenderWindow &window, GameState &state)
 {
 	unsigned int i=0;
 	while (i<entities.size() && !entities[i].getGlobalBounds().contains(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y))
@@ -197,41 +201,52 @@ int main() {
 	std::cout << "Window created" << std::endl;
 
 	/* Adds the frame texture */
-  TextureHolder::get().load(Textures::Background, "./Images/Background.png");
-  TextureHolder::get().get(Textures::Background).setRepeated(true);
+  TextureHolder::get()->load(Textures::Background, "./Images/Background.png");
+  TextureHolder::get()->get(Textures::Background).setRepeated(true);
 
 	/* Adds the card back texture */
-  TextureHolder::get().load(Textures::CardBack, "./Images/CardBack.png");
-  TextureHolder::get().get(Textures::CardBack).setSmooth(true);
+  TextureHolder::get()->load(Textures::CardBack, "./Images/CardBack.png");
+  TextureHolder::get()->get(Textures::CardBack).setSmooth(true);
 
 	/* Adds the card front textures vector */
-  TextureHolder::get().load(Textures::Giraffe, "./Images/CardFronts/Giraffe.png");
-  TextureHolder::get().get(Textures::Giraffe).setSmooth(true);
-  TextureHolder::get().load(Textures::Hippo, "./Images/CardFronts/Hippo.png");
-  TextureHolder::get().get(Textures::Hippo).setSmooth(true);
-  TextureHolder::get().load(Textures::Monkey, "./Images/CardFronts/Monkey.png");
-  TextureHolder::get().get(Textures::Monkey).setSmooth(true);
-  TextureHolder::get().load(Textures::Penguin, "./Images/CardFronts/Penguin.png");
-  TextureHolder::get().get(Textures::Penguin).setSmooth(true);
-  TextureHolder::get().load(Textures::Panda, "./Images/CardFronts/Panda.png");
-  TextureHolder::get().get(Textures::Panda).setSmooth(true);
-  TextureHolder::get().load(Textures::Parrot, "./Images/CardFronts/Parrot.png");
-  TextureHolder::get().get(Textures::Parrot).setSmooth(true);
-  TextureHolder::get().load(Textures::Pig, "./Images/CardFronts/Pig.png");
-  TextureHolder::get().get(Textures::Pig).setSmooth(true);
-  TextureHolder::get().load(Textures::Rabbit, "./Images/CardFronts/Rabbit.png");
-  TextureHolder::get().get(Textures::Rabbit).setSmooth(true);
-  TextureHolder::get().load(Textures::Snake, "./Images/CardFronts/Snake.png");
-  TextureHolder::get().get(Textures::Snake).setSmooth(true);
-  TextureHolder::get().load(Textures::Elephant, "./Images/CardFronts/Elephant.png");
-  TextureHolder::get().get(Textures::Elephant).setSmooth(true);
+  std::map<int, Textures::ID> cardFrontTexture;
+  TextureHolder::get()->load(Textures::Giraffe, "./Images/CardFronts/Giraffe.png");
+  TextureHolder::get()->get(Textures::Giraffe).setSmooth(true);
+  cardFrontTexture[0] = Textures::Giraffe;
+  TextureHolder::get()->load(Textures::Hippo, "./Images/CardFronts/Hippo.png");
+  TextureHolder::get()->get(Textures::Hippo).setSmooth(true);
+  cardFrontTexture[1] = Textures::Hippo;
+  TextureHolder::get()->load(Textures::Monkey, "./Images/CardFronts/Monkey.png");
+  TextureHolder::get()->get(Textures::Monkey).setSmooth(true);
+  cardFrontTexture[2] = Textures::Monkey;
+  TextureHolder::get()->load(Textures::Penguin, "./Images/CardFronts/Penguin.png");
+  TextureHolder::get()->get(Textures::Penguin).setSmooth(true);
+  cardFrontTexture[3] = Textures::Penguin;
+  TextureHolder::get()->load(Textures::Panda, "./Images/CardFronts/Panda.png");
+  TextureHolder::get()->get(Textures::Panda).setSmooth(true);
+  cardFrontTexture[4] = Textures::Panda;
+  TextureHolder::get()->load(Textures::Parrot, "./Images/CardFronts/Parrot.png");
+  TextureHolder::get()->get(Textures::Parrot).setSmooth(true);
+  cardFrontTexture[5] = Textures::Parrot;
+  TextureHolder::get()->load(Textures::Pig, "./Images/CardFronts/Pig.png");
+  TextureHolder::get()->get(Textures::Pig).setSmooth(true);
+  cardFrontTexture[6] = Textures::Pig;
+  TextureHolder::get()->load(Textures::Rabbit, "./Images/CardFronts/Rabbit.png");
+  TextureHolder::get()->get(Textures::Rabbit).setSmooth(true);
+  cardFrontTexture[7] = Textures::Rabbit;
+  TextureHolder::get()->load(Textures::Snake, "./Images/CardFronts/Snake.png");
+  TextureHolder::get()->get(Textures::Snake).setSmooth(true);
+  cardFrontTexture[8] = Textures::Snake;
+  TextureHolder::get()->load(Textures::Elephant, "./Images/CardFronts/Elephant.png");
+  TextureHolder::get()->get(Textures::Elephant).setSmooth(true);
+  cardFrontTexture[9] = Textures::Elephant;
 
 	/* Generates and displays the board of cards */
 	std::vector<std::vector<Card>> board;
-	board = generateBoard(5, 4, TextureHolder::get().get(Textures::CardBack));
+	board = generateBoard(5, 4, Textures::CardBack);
 	std::map<int, sf::RectangleShape> entities;
 	entities = generateEntities(board);
-	displayBoard(window, TextureHolder::get().get(Textures::Background), board, entities);
+	displayBoard(window, TextureHolder::get()->get(Textures::Background), board, entities);
 
 	/* Initializes the game state */
 	GameState state;
@@ -267,15 +282,15 @@ int main() {
 				case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-							manageClick(entities, board, cardFrontTexture, TextureHolder::get().get(Textures::CardBack), window, state);
-							displayBoard(window, TextureHolder::get().get(Textures::Background), board, entities);
+							manageClick(entities, board, cardFrontTexture, Textures::CardBack, window, state);
+							displayBoard(window, TextureHolder::get()->get(Textures::Background), board, entities);
 							/* Checks if the second card has been flipped over */
 							if (state.endTurn() > 0) {
 								sf::sleep(sf::seconds(1));
 								std::vector<int> cards = state.getCards();
-								board[cards[0]][cards[1]].flipBack(TextureHolder::get().get(Textures::CardBack));
-								board[cards[2]][cards[3]].flipBack(TextureHolder::get().get(Textures::CardBack));
-								displayBoard(window, TextureHolder::get().get(Textures::Background), board, entities);
+								board[cards[0]][cards[1]].flipBack(TextureHolder::get()->get(Textures::CardBack));
+								board[cards[2]][cards[3]].flipBack(TextureHolder::get()->get(Textures::CardBack));
+								displayBoard(window, TextureHolder::get()->get(Textures::Background), board, entities);
 							}
 						}
 						break;
