@@ -1,5 +1,5 @@
 #include <iostream>
-#include "GameState.h"
+#include "../inc/GameState.h"
 
 GameState::GameState()
 {

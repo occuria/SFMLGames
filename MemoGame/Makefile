@@ -1,21 +1,23 @@
 CFLAGS=-Wall -Werror -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+INC=./inc/
+SRC=./src/
 
 all: memo
 
-memo: main.o Card.o GameState.o TextureHolder.o
-	g++ $(CFLAGS) -o memo main.o Card.o GameState.o TextureHolder.o
+memo: Main.o Card.o GameState.o TextureHolder.o
+	g++ $(CFLAGS) -o memo Main.o Card.o GameState.o TextureHolder.o
 
-main.o: main.cpp
-	g++ $(CFLAGS) -c main.cpp
+Main.o: ${SRC}Main.cpp
+	g++ $(CFLAGS) -c ${SRC}Main.cpp
 
-Card.o: Card.cpp Card.h
-	g++ $(CFLAGS) -c Card.cpp 
+Card.o: ${SRC}Card.cpp ${INC}Card.h
+	g++ $(CFLAGS) -c ${SRC}Card.cpp 
 
-GameState.o: GameState.cpp GameState.h
-	g++ $(CFLAGS) -c GameState.cpp
+GameState.o: ${SRC}GameState.cpp ${INC}GameState.h
+	g++ $(CFLAGS) -c ${SRC}GameState.cpp
 
-TextureHolder.o: TextureHolder.cpp TextureHolder.hpp
-	g++ $(CFLAGS) -c TextureHolder.cpp
+TextureHolder.o: ${SRC}TextureHolder.cpp ${INC}TextureHolder.hpp
+	g++ $(CFLAGS) -c ${SRC}TextureHolder.cpp
 
 clean:
 	rm -f memo *.o

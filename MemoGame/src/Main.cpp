@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <random>
 #include <map>
-#include "Card.h"
-#include "GameState.h"
-#include "TextureHolder.hpp"
+#include "../inc/Card.h"
+#include "../inc/GameState.h"
+#include "../inc/TextureHolder.hpp"
 
 const int width = 1600;
 const int height = 900;
@@ -102,7 +102,7 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	window.draw(frame);
 	/* Displays restart button */
 	sf::Texture restart_b_t;
-	if (!restart_b_t.loadFromFile("./Images/restart.png")) {
+	if (!restart_b_t.loadFromFile("resources/restart.png")) {
 		std::cout << "Error opening restart button texture file" << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -201,43 +201,43 @@ int main() {
 	std::cout << "Window created" << std::endl;
 
 	/* Adds the frame texture */
-  TextureHolder::get()->load(Textures::Background, "./Images/Background.png");
+  TextureHolder::get()->load(Textures::Background, "resources/Background.png");
   TextureHolder::get()->get(Textures::Background).setRepeated(true);
 
 	/* Adds the card back texture */
-  TextureHolder::get()->load(Textures::CardBack, "./Images/CardBack.png");
+  TextureHolder::get()->load(Textures::CardBack, "resources/CardBack.png");
   TextureHolder::get()->get(Textures::CardBack).setSmooth(true);
 
 	/* Adds the card front textures vector */
   std::map<int, Textures::ID> cardFrontTexture;
-  TextureHolder::get()->load(Textures::Giraffe, "./Images/CardFronts/Giraffe.png");
+  TextureHolder::get()->load(Textures::Giraffe, "resources/CardFronts/Giraffe.png");
   TextureHolder::get()->get(Textures::Giraffe).setSmooth(true);
   cardFrontTexture[0] = Textures::Giraffe;
-  TextureHolder::get()->load(Textures::Hippo, "./Images/CardFronts/Hippo.png");
+  TextureHolder::get()->load(Textures::Hippo, "resources/CardFronts/Hippo.png");
   TextureHolder::get()->get(Textures::Hippo).setSmooth(true);
   cardFrontTexture[1] = Textures::Hippo;
-  TextureHolder::get()->load(Textures::Monkey, "./Images/CardFronts/Monkey.png");
+  TextureHolder::get()->load(Textures::Monkey, "resources/CardFronts/Monkey.png");
   TextureHolder::get()->get(Textures::Monkey).setSmooth(true);
   cardFrontTexture[2] = Textures::Monkey;
-  TextureHolder::get()->load(Textures::Penguin, "./Images/CardFronts/Penguin.png");
+  TextureHolder::get()->load(Textures::Penguin, "resources/CardFronts/Penguin.png");
   TextureHolder::get()->get(Textures::Penguin).setSmooth(true);
   cardFrontTexture[3] = Textures::Penguin;
-  TextureHolder::get()->load(Textures::Panda, "./Images/CardFronts/Panda.png");
+  TextureHolder::get()->load(Textures::Panda, "resources/CardFronts/Panda.png");
   TextureHolder::get()->get(Textures::Panda).setSmooth(true);
   cardFrontTexture[4] = Textures::Panda;
-  TextureHolder::get()->load(Textures::Parrot, "./Images/CardFronts/Parrot.png");
+  TextureHolder::get()->load(Textures::Parrot, "resources/CardFronts/Parrot.png");
   TextureHolder::get()->get(Textures::Parrot).setSmooth(true);
   cardFrontTexture[5] = Textures::Parrot;
-  TextureHolder::get()->load(Textures::Pig, "./Images/CardFronts/Pig.png");
+  TextureHolder::get()->load(Textures::Pig, "resources/CardFronts/Pig.png");
   TextureHolder::get()->get(Textures::Pig).setSmooth(true);
   cardFrontTexture[6] = Textures::Pig;
-  TextureHolder::get()->load(Textures::Rabbit, "./Images/CardFronts/Rabbit.png");
+  TextureHolder::get()->load(Textures::Rabbit, "resources/CardFronts/Rabbit.png");
   TextureHolder::get()->get(Textures::Rabbit).setSmooth(true);
   cardFrontTexture[7] = Textures::Rabbit;
-  TextureHolder::get()->load(Textures::Snake, "./Images/CardFronts/Snake.png");
+  TextureHolder::get()->load(Textures::Snake, "resources/CardFronts/Snake.png");
   TextureHolder::get()->get(Textures::Snake).setSmooth(true);
   cardFrontTexture[8] = Textures::Snake;
-  TextureHolder::get()->load(Textures::Elephant, "./Images/CardFronts/Elephant.png");
+  TextureHolder::get()->load(Textures::Elephant, "resources/CardFronts/Elephant.png");
   TextureHolder::get()->get(Textures::Elephant).setSmooth(true);
   cardFrontTexture[9] = Textures::Elephant;
 
