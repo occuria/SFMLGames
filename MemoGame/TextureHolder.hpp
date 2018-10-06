@@ -11,8 +11,7 @@ namespace Textures
 	  /* Button textures */
 	  RestartButton, 
 	  /* Front card textures */
-	  ElephantFront, GiraffeFront, HippoFront, MonkeyFront, PandaFront, 
-	  ParrotFront,PenguinFront, PigFront, RabbitFront, SnakeFront 
+	  Elephant, Giraffe, Hippo, Monkey, Panda, Parrot,Penguin, Pig, Rabbit, Snake 
 	};
 }
 
@@ -27,7 +26,7 @@ class TextureHolder
     /**
      * Singleton implementation.
      */
-		static TextureHolder& instance()
+		static TextureHolder& get()
 		{
 			static TextureHolder instance;
 			return instance;
