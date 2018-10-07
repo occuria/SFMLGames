@@ -102,10 +102,7 @@ void displayBoard(sf::RenderWindow &window, sf::Texture frameTexture, std::vecto
 	window.draw(frame);
 	/* Displays restart button */
 	sf::Texture restart_b_t;
-	if (!restart_b_t.loadFromFile("resources/restart.png")) {
-		std::cout << "Error opening restart button texture file" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	restart_b_t.loadFromFile("resources/restart.png");
 	restart_b_t.setSmooth(true);
 	sf::RectangleShape restart_b;
 	restart_b.setTexture(&restart_b_t);
@@ -141,11 +138,9 @@ int allCardsPaired(std::vector<std::vector<Card>> board)
 
 void flipCardOnClick(int i, std::vector<std::vector<Card>> &board, std::map<int, Textures::ID> &cardFrontTexture, Textures::ID cardBackId, sf::RenderWindow &window, GameState &state)
 {
-	std::cout << "Game state: " << state.getState() << std::endl;
 	switch (state.getState()) {
 		case GameState::FirstCard:
 			{
-				std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
 				window.clear();
 				/* Click on card */
 				if (board[i/board[0].size()][i%board[0].size()].flipOver(TextureHolder::get()->get(cardFrontTexture[board[i/board[0].size()][i%board[0].size()].getFid()])) < 0) {
@@ -198,7 +193,6 @@ void manageClick(std::map<int, sf::RectangleShape> entities, std::vector<std::ve
 
 int main() {
 	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);
-	std::cout << "Window created" << std::endl;
 
 	/* Adds the frame texture */
   TextureHolder::get()->load(Textures::Background, "resources/Background.png");
@@ -210,36 +204,12 @@ int main() {
 
 	/* Adds the card front textures vector */
   std::map<int, Textures::ID> cardFrontTexture;
-  TextureHolder::get()->load(Textures::Giraffe, "resources/CardFronts/Giraffe.png");
-  TextureHolder::get()->get(Textures::Giraffe).setSmooth(true);
-  cardFrontTexture[0] = Textures::Giraffe;
-  TextureHolder::get()->load(Textures::Hippo, "resources/CardFronts/Hippo.png");
-  TextureHolder::get()->get(Textures::Hippo).setSmooth(true);
-  cardFrontTexture[1] = Textures::Hippo;
-  TextureHolder::get()->load(Textures::Monkey, "resources/CardFronts/Monkey.png");
-  TextureHolder::get()->get(Textures::Monkey).setSmooth(true);
-  cardFrontTexture[2] = Textures::Monkey;
-  TextureHolder::get()->load(Textures::Penguin, "resources/CardFronts/Penguin.png");
-  TextureHolder::get()->get(Textures::Penguin).setSmooth(true);
-  cardFrontTexture[3] = Textures::Penguin;
-  TextureHolder::get()->load(Textures::Panda, "resources/CardFronts/Panda.png");
-  TextureHolder::get()->get(Textures::Panda).setSmooth(true);
-  cardFrontTexture[4] = Textures::Panda;
-  TextureHolder::get()->load(Textures::Parrot, "resources/CardFronts/Parrot.png");
-  TextureHolder::get()->get(Textures::Parrot).setSmooth(true);
-  cardFrontTexture[5] = Textures::Parrot;
-  TextureHolder::get()->load(Textures::Pig, "resources/CardFronts/Pig.png");
-  TextureHolder::get()->get(Textures::Pig).setSmooth(true);
-  cardFrontTexture[6] = Textures::Pig;
-  TextureHolder::get()->load(Textures::Rabbit, "resources/CardFronts/Rabbit.png");
-  TextureHolder::get()->get(Textures::Rabbit).setSmooth(true);
-  cardFrontTexture[7] = Textures::Rabbit;
-  TextureHolder::get()->load(Textures::Snake, "resources/CardFronts/Snake.png");
-  TextureHolder::get()->get(Textures::Snake).setSmooth(true);
-  cardFrontTexture[8] = Textures::Snake;
-  TextureHolder::get()->load(Textures::Elephant, "resources/CardFronts/Elephant.png");
-  TextureHolder::get()->get(Textures::Elephant).setSmooth(true);
-  cardFrontTexture[9] = Textures::Elephant;
+  for (int i=Textures::FrontOffset+1; i<Textures::Last; i++) {
+    TextureHolder::get()->load((Textures::ID)i, std::string(
+          "resources/CardFronts/") + EnumToString((Textures::ID)i) + ".png");
+    TextureHolder::get()->get((Textures::ID)i).setSmooth(true);
+    cardFrontTexture[i-(Textures::FrontOffset+1)] = (Textures::ID)i;
+  }
 
 	/* Generates and displays the board of cards */
 	std::vector<std::vector<Card>> board;
@@ -250,11 +220,6 @@ int main() {
 
 	/* Initializes the game state */
 	GameState state;
-	std::cout << "Game state initialized" << std::endl;
-	if (state.getState() == GameState::FirstCard) {
-		std::cout << "Game is in FirstCard state after initialization" << std::endl;
-		std::cout << "Cards paired: " << std::to_string(allCardsPaired(board)) << std::endl;
-	}
 
 	/* Loads the music */
 	/*
