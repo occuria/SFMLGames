@@ -2,25 +2,52 @@
 #define DEF_CARD
 
 #include <SFML/Graphics.hpp>
+#include "TextureHolder.hpp"
+#include "BoardDimensions.hpp"
+
+#define CARDBACK Textures::CardBack
 
 class Card
 {
 	public:
-		
-		Card();
-		Card(sf::RectangleShape s, int id);
-		int flipOver(const sf::Texture &t);
-		int flipBack(const sf::Texture &t);
-		sf::RectangleShape &getShape();
-		int getFid();
+		/**
+		 * Complete constructor.
+		 */
+		Card(boardDimensions bd, Textures::ID pairId);
+		/**
+		 * Flip the card on the front side, changes the shape texture.
+		 */
+		int flipFront();
+		/**
+		 * Flip the card on the front side, changes the shape texture.
+		 * Uses the CARDBACK macro.
+		 */
+		int flipBack();
+		/**
+		 * Sets paired value to true.
+		 */
 		void pair();
+		/**
+		 * Sets paired value to false.
+		 */
 		void unpair();
+		/**
+		 * Returns the value of pairId.
+		 */
+		int getPairId();
+		/**
+		 * Returns the value of paired.
+		 */
 		bool isPaired();
+		/**
+		 * Returns the shape.
+		 */
+		sf::Sprite& getSprite();
 
 	private:
 
-		sf::RectangleShape shape;
-		int fid;
+		sf::Sprite s;
+    Textures::ID pairId;
 		bool paired;
 
 };

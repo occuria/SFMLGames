@@ -1,63 +1,62 @@
 #include "../inc/Card.h"
 #include <iostream>
 
-Card::Card()
+Card::Card(boardDimensions bd, Textures::ID pairId)
 {
-	paired = false;
+  this->s.setTexture(TextureHolder::get()->get(CARDBACK));
+  this->s.setColor(sf::Color(50,0,100));
+  this->s.setScale(sf::Vector2f(
+        bd.cardsize/this->s.getTexture()->getSize().x,
+        bd.cardsize/this->s.getTexture()->getSize().y));
+	this->pairId = pairId;
+	this->paired = false;
 }
 
-Card::Card(sf::RectangleShape s, int id)
+int Card::flipFront()
 {
-	shape = s;
-	fid = id;
-	paired = false;
-}
-
-int Card::flipOver(const sf::Texture &t)
-{
-	if (paired) {
-		return -1;
-	}
-	shape.setTexture(&t);
-	shape.setTextureRect(sf::IntRect(0, 0, t.getSize().x, t.getSize().y));
-	shape.setFillColor(sf::Color(255,255,255));
+  /* Check if the card can be flipped on the front side */
+	if (isPaired()) { return -1; }
+	/* Get the card front texture and set it onto the s */
+  sf::Texture t = TextureHolder::get()->get((this->pairId));
+	this->s.setTexture(t);
+	this->s.setColor(sf::Color(255,255,255));
 	paired = true;
 	return 0;
 }
 
-int Card::flipBack(const sf::Texture &t)
+int Card::flipBack()
 {
-	if (!paired) {
-		return -1;
-	}
-	shape.setTexture(&t);
-	shape.setTextureRect(sf::IntRect(0, 0, t.getSize().x, t.getSize().y));
-	shape.setFillColor(sf::Color(50,0,100));
+  /* Check if the card can be flipped on the front side */
+	if (!isPaired()) { return -1;	}
+	/* Get the card back texture and set it onto the s */
+  sf::Texture t = TextureHolder::get()->get((CARDBACK));
+	this->s.setTexture(t);
+	this->s.setColor(sf::Color(50,0,100));
 	paired = false;
 	return 0;
 }
 
-sf::RectangleShape &Card::getShape()
+sf::Sprite& Card::getSprite()
 {
-	return shape;
+	return this->s;
 }
 
-int Card::getFid()
+int Card::getPairId()
 {
-	return fid;
+	return this->pairId;
 }
 
 bool Card::isPaired()
 {
-	return paired;
+	return this->paired;
 }
 
 void Card::pair()
 {
-	paired = true;
+	this->paired = true;
 }
 
 void Card::unpair()
 {
-	paired = false;
+	this->paired = false;
 }
