@@ -79,3 +79,14 @@ std::vector<std::vector<Card>> Game::getBoard()
 {
   return this->board;
 }
+
+bool Game::areAllCardsPaired()
+{
+  bool res = true;
+  for (std::vector<Card> vc : this->board) {
+    for (Card c : vc) {
+      res = res && c.isPaired();
+    }
+  }
+  return res;
+}

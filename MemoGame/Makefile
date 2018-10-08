@@ -4,8 +4,8 @@ SRC=./src/
 
 all: memo
 
-memo: Main.o Card.o Game.o GameState.o TextureHolder.o BoardDimensions.o
-	g++ $(CFLAGS) -o memo Main.o Card.o Game.o GameState.o TextureHolder.o BoardDimensions.o
+memo: Main.o Card.o Game.o GameState.o TextureHolder.o BoardDimensions.o EventManager.o
+	g++ $(CFLAGS) -o memo Main.o Card.o Game.o GameState.o TextureHolder.o BoardDimensions.o EventManager.o
 
 Main.o: ${SRC}Main.cpp
 	g++ $(CFLAGS) -c ${SRC}Main.cpp
@@ -24,6 +24,9 @@ TextureHolder.o: ${SRC}TextureHolder.cpp ${INC}TextureHolder.hpp
 
 BoardDimensions.o: ${SRC}BoardDimensions.cpp ${INC}BoardDimensions.hpp
 	g++ $(CFLAGS) -c ${SRC}BoardDimensions.cpp
+
+EventManager.o: ${SRC}EventManager.cpp ${INC}EventManager.hpp
+	g++ $(CFLAGS) -c ${SRC}EventManager.cpp
 
 clean:
 	rm -f memo *.o

@@ -10,6 +10,10 @@
 class Card
 {
 	public:
+	  /**
+	   * Deault constructor, used to initialize GameState.
+	   */
+	  Card();
 		/**
 		 * Complete constructor.
 		 */
@@ -48,7 +52,7 @@ class Card
 
 		sf::Sprite s;
     Textures::ID pairId;
-		bool paired;
+		bool isFlipped;
 
 };
 

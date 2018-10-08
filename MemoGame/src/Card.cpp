@@ -1,6 +1,8 @@
 #include "../inc/Card.h"
 #include <iostream>
 
+Card::Card() {}
+
 Card::Card(boardDimensions bd, Textures::ID pairId)
 {
   this->s.setTexture(TextureHolder::get()->get(CARDBACK));
@@ -9,30 +11,30 @@ Card::Card(boardDimensions bd, Textures::ID pairId)
         bd.cardsize/this->s.getTexture()->getSize().x,
         bd.cardsize/this->s.getTexture()->getSize().y));
 	this->pairId = pairId;
-	this->paired = false;
+	this->isFlipped = false;
 }
 
 int Card::flipFront()
 {
   /* Check if the card can be flipped on the front side */
-	if (isPaired()) { return -1; }
+	if (isFlipped) { return -1; }
 	/* Get the card front texture and set it onto the s */
   sf::Texture t = TextureHolder::get()->get((this->pairId));
 	this->s.setTexture(t);
 	this->s.setColor(sf::Color(255,255,255));
-	paired = true;
+	isFlipped = true;
 	return 0;
 }
 
 int Card::flipBack()
 {
   /* Check if the card can be flipped on the front side */
-	if (!isPaired()) { return -1;	}
+	if (!isFlipped) { return -1;	}
 	/* Get the card back texture and set it onto the s */
   sf::Texture t = TextureHolder::get()->get((CARDBACK));
 	this->s.setTexture(t);
 	this->s.setColor(sf::Color(50,0,100));
-	paired = false;
+	isFlipped = false;
 	return 0;
 }
 
@@ -48,15 +50,15 @@ int Card::getPairId()
 
 bool Card::isPaired()
 {
-	return this->paired;
+	return this->isFlipped;
 }
 
 void Card::pair()
 {
-	this->paired = true;
+	this->isFlipped = true;
 }
 
 void Card::unpair()
 {
-	this->paired = false;
+	this->isFlipped = false;
 }

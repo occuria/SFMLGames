@@ -1,66 +1,48 @@
 #include <iostream>
 #include "../inc/GameState.h"
 
-GameState::GameState()
+GameState::GameState(Game& game): game(game)
 {
-	state = FirstCard;
+	this->state = PendingForFirstCard;
 }
 
 GameState::State GameState::getState()
 {
-	return state;
+	return this->state;
 }
 
-std::vector<int> GameState::getCards()
+int GameState::flipFirstCard(cardId cid)
 {
-	std::vector<int> res;
-	res.push_back(firstCard[0]);
-	res.push_back(firstCard[1]);
-	res.push_back(secondCard[0]);
-	res.push_back(secondCard[1]);
-	return res;
-}
-
-void GameState::flipFirstCard(int x, int y, int id)
-{
-	if (state != FirstCard) {
-		std::cout << "Game must be in FirstCard state" << std::endl;
-		return;
+	if (this->state != PendingForFirstCard) {
+    return -1;
 	}
-	firstCard[0] = x;
-	firstCard[1] = y;
-	firstCard[2] = id;
-	state = SecondCard;
+	this->first = cid;
+	this->state = PendingForSecondCard;
+	return 0;
 }
 
-void GameState::flipSecondCard(int x, int y, int id)
+int GameState::flipSecondCard(cardId cid)
 {
-	if (state != SecondCard) {
-		std::cout << "Game must be in SecondCard state" << std::endl;
-		return;
-	}
-	if (x == firstCard[0] && y == firstCard[1]) {
-		std::cout << "Can't flip over twice the same card in a turn" << std::endl;
-		return;
-	}
-	secondCard[0] = x;
-	secondCard[1] = y;
-	secondCard[2] = id;
-	state = pending;
-}
-
-int GameState::endTurn()
-{
-	int res;
-	if (state != pending) {
-		std::cout << "Game must be in pending state" << std::endl;
+	if (this->state != PendingForSecondCard
+	    || this->first.id <= Textures::FrontOffset
+	    || this->second.id <= Textures::FrontOffset)
+	{
 		return -1;
 	}
-	if (secondCard[2] == firstCard[2]) {
-		res = 0;
-	} else {
-		res = 1;
-	}
-	state = FirstCard;
-	return res;
+	this->second = cid;
+
+	/* Checks if cards match and decides of the next state */
+	if (first.id != second.id) {
+    this->state = PendingForFirstCard;
+    return 0;
+  } else {
+    this->state = GameOver;
+    endGame();
+    return 0;
+  }
+}
+
+void GameState::endGame()
+{
+  std::cout << "Game over !" << std::endl;
 }
