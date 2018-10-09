@@ -14,6 +14,7 @@ Card::Card(boardDimensions bd, Textures::ID pairId)
 
 int Card::flipFront()
 {
+  std::cout << "flipFront" << std::endl;
   /* Check if the card can be flipped on the front side */
 	if (this->isFlipped) { return -1; }
 	/* Get the card front texture and set it onto the s */

@@ -53,7 +53,6 @@ int main() {
       case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-              std::cout << "oolilol" << std::endl;
 						  game.manageEvent(sf::Vector2f(
 						        event.mouseButton.x,event.mouseButton.y));
               game.display(window);

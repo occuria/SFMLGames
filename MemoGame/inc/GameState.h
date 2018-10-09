@@ -14,7 +14,7 @@ struct cardId {
 class GameState
 {
 	public:
-		enum State {PendingForFirstCard, PendingForSecondCard, GameOver};
+		enum State {PendingForFirstCard, PendingForSecondCard, Decision, GameOver};
 		/**
 		 * Default constructor to set the initial state.
 		 */
@@ -23,7 +23,7 @@ class GameState
 		 * To be called in PendingForFirstCard or PendingForSecondCard state.
 		 * Updates the state appropriately.
 		 */
-		int flipCardState(cardId cid);
+		int nextState(cardId cid);
 		/**
 		 * To be called in GameOver state.
 		 */

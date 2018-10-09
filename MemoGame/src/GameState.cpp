@@ -8,11 +8,12 @@ GameState::GameState()
 
 /**
  * Return codes:
- * 0: cards must not be flipped back
- * 1: cards do not match, they must be flipped back
+ * 0: flip the card on the front
+ * 1: nothing, cards are paired
+ * 2: flip both cards back, they are not paired
  * -1: error code
  */
-int GameState::flipCardState(cardId cid)
+int GameState::nextState(cardId cid)
 {
   switch (this->state) {
     case PendingForFirstCard :
@@ -21,17 +22,21 @@ int GameState::flipCardState(cardId cid)
       return 0;
     case PendingForSecondCard :
       this->second = cid;
+      this->state = Decision;
+      return 0;
+      break;
+    case Decision :
       /* Checks wether card can be paired */
+      this->state = PendingForFirstCard;
       if (this->first.id == this->second.id) {
-        /* Cards are paired, they are left on the front side */
-        this->state = PendingForFirstCard;
-        return 0;
-        /* Checks wether the game is over, and return 3 in this case */
-      } else {
-        this->state = PendingForFirstCard;
+        /* Paired */
         return 1;
+      } else {
+        /* Not paired */
+        return 2;
       }
-    default :
+      break;
+    case GameOver :
       return -1;
   }
 	return -1;
