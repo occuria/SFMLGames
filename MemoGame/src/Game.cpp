@@ -8,18 +8,18 @@ Game::Game(float rspacing, float width, float height, int xcards, int ycards):
 void Game::loadResources()
 {
 	/* Loads the background texture */
-  TextureHolder::get()->load(Textures::Background, "resources/Background.png");
-  TextureHolder::get()->get(Textures::Background).setRepeated(true);
+  TextureHolder::get().load(Textures::Background, "resources/Background.png");
+  TextureHolder::get().get(Textures::Background).setRepeated(true);
 
 	/* Loads the card back texture */
-  TextureHolder::get()->load(Textures::CardBack, "resources/CardBack.png");
-  TextureHolder::get()->get(Textures::CardBack).setSmooth(true);
+  TextureHolder::get().load(Textures::CardBack, "resources/CardBack.png");
+  TextureHolder::get().get(Textures::CardBack).setSmooth(true);
 
 	/* Loads the card front textures vector */
   for (int i=Textures::FrontOffset+1; i<Textures::Last; i++) {
-    TextureHolder::get()->load((Textures::ID)i, std::string(
+    TextureHolder::get().load((Textures::ID)i, std::string(
           "resources/CardFronts/") + EnumToString((Textures::ID)i) + ".png");
-    TextureHolder::get()->get((Textures::ID)i).setSmooth(true);
+    TextureHolder::get().get((Textures::ID)i).setSmooth(true);
     texMap[i-(Textures::FrontOffset+1)] = (Textures::ID)i;
   }
 }
@@ -58,7 +58,7 @@ void Game::display(sf::RenderWindow& window)
   /* Displays the background */
 	sf::RectangleShape frame(sf::Vector2f(window.getSize().x, window.getSize().y));
 	frame.setTextureRect(sf::IntRect(0,0,window.getSize().x, window.getSize().y));
-	frame.setTexture(&TextureHolder::get()->get(Textures::Background));
+	frame.setTexture(&TextureHolder::get().get(Textures::Background));
 	window.draw(frame);
 	/* Displays cards */
 	for (std::vector<Card> vc : board) {

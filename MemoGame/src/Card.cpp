@@ -5,7 +5,7 @@ Card::Card() {}
 
 Card::Card(boardDimensions bd, Textures::ID pairId)
 {
-  this->s.setTexture(TextureHolder::get()->get(CARDBACK));
+  this->s.setTexture(TextureHolder::get().get(CARDBACK));
   this->s.setColor(sf::Color(50,0,100));
   this->s.setScale(sf::Vector2f(
         bd.cardsize/this->s.getTexture()->getSize().x,
@@ -20,7 +20,7 @@ int Card::flipFront()
 	if (this->isFlipped) { return -1; }
 	/* Get the card front texture and set it onto the s */
   std::cout << "flipFront" << std::endl;
-	this->s.setTexture(TextureHolder::get()->get((this->pairId)));
+	this->s.setTexture(TextureHolder::get().get((this->pairId)));
 	this->s.setColor(sf::Color(255,255,255));
 	this->isFlipped = true;
 	return 0;
@@ -31,7 +31,7 @@ int Card::flipBack()
   /* Check if the card can be flipped on the front side */
 	if (!isFlipped) { return -1;	}
 	/* Get the card back texture and set it onto the s */
-  sf::Texture t = TextureHolder::get()->get((CARDBACK));
+  sf::Texture t = TextureHolder::get().get((CARDBACK));
 	this->s.setTexture(t);
 	this->s.setColor(sf::Color(50,0,100));
 	isFlipped = false;

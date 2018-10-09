@@ -57,10 +57,10 @@ class TextureHolder
     /**
      * Singleton implementation.
      */
-		static TextureHolder* get()
+		static TextureHolder& get()
 		{
 			static TextureHolder instance;
-			return &instance;
+			return instance;
 		}
     
     /**
