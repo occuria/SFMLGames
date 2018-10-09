@@ -3,6 +3,8 @@
 
 #include "TextureHolder.hpp"
 #include "BoardDimensions.hpp"
+#include "EventManager.hpp"
+#include "GameState.h"
 #include "Card.h"
 
 class Game
@@ -27,23 +29,42 @@ class Game
      */
     void display(sf::RenderWindow& window);
     /**
+     * Calls the event manager to manage incoming events.
+     */
+    int manageEvent(sf::Vector2f pos);
+    /**
+     * Flips a card on the front side. Takes in parameter the position of the
+     * card in the 2D vector of cards, board. Calls the game state to update 
+     * the state appropriately.
+     */
+    int flipCard(sf::Vector2i);
+    /**
+     * Returns true if all cards are paired.
+     */
+    bool areAllCardsPaired();
+    /**
      * Returns the texture map.
      */
     std::map<int, Textures::ID> getTexMap();
     /**
      * Returns the board of cards.
      */
-    std::vector<std::vector<Card>>& getBoard();
+    std::vector<std::vector<Card>> getBoard();
     /**
-     * Returns true if all cards are paired.
+     * Returns the event manager.
      */
-    bool areAllCardsPaired();
+    EventManager getEventManager();
+    /**
+     * Returns the game state.
+     */
+    GameState getGameState();
 
   private:
     std::map<int, Textures::ID> texMap;
     std::vector<std::vector<Card>> board;
-    struct boardDimensions bd;
-
+    boardDimensions bd;
+    EventManager em;
+    GameState gs;
 };
 
 #endif

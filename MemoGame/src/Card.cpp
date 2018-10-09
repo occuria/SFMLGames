@@ -1,8 +1,6 @@
 #include "../inc/Card.h"
 #include <iostream>
 
-Card::Card() {}
-
 Card::Card(boardDimensions bd, Textures::ID pairId)
 {
   this->s.setTexture(TextureHolder::get().get(CARDBACK));
@@ -19,7 +17,6 @@ int Card::flipFront()
   /* Check if the card can be flipped on the front side */
 	if (this->isFlipped) { return -1; }
 	/* Get the card front texture and set it onto the s */
-  std::cout << "flipFront" << std::endl;
 	this->s.setTexture(TextureHolder::get().get((this->pairId)));
 	this->s.setColor(sf::Color(255,255,255));
 	this->isFlipped = true;

@@ -18,15 +18,13 @@ const int ycards = 4;
 
 int main() {
   /* Creates the window */
-	sf::RenderWindow window(sf::VideoMode(width, height), "Memorizing Game", sf::Style::Fullscreen);
-	/* Loads resources and initializes the game */
+	sf::RenderWindow window(sf::VideoMode(width, height), 
+	    "Memorizing Game", sf::Style::Fullscreen);
+	/* Loads resources and initializes the game, with its game state and event
+	 * manager */
   Game game = Game(rspacing, width, height, xcards, ycards);
   game.loadResources();
   game.initialize();
-  game.display(window);
-	/* Initializes the game state and the event manager */
-	GameState gs(game);
-	EventManager em(game, gs);
 
 	/* Loads the music */
 	/*
@@ -55,7 +53,9 @@ int main() {
       case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-						  em.ManageClick(sf::Vector2f(event.mouseButton.x,event.mouseButton.y));
+              std::cout << "oolilol" << std::endl;
+						  game.manageEvent(sf::Vector2f(
+						        event.mouseButton.x,event.mouseButton.y));
               game.display(window);
             }
 						break;
@@ -64,6 +64,7 @@ int main() {
 					break;
 			}
 		}
+    game.display(window);
 	}
 	return 0;
 }

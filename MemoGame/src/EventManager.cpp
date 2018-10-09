@@ -1,18 +1,26 @@
 #include <iostream>
 #include "../inc/EventManager.hpp"
 
-EventManager::EventManager(Game& game, GameState& gs): game(game), gs(gs)
-{}
-
-void EventManager::ManageClick(sf::Vector2f pos)
+sf::Vector2i EventManager::manageClick(std::vector<std::vector<Card>> board, sf::Vector2f pos)
 {
+  sf::Vector2i v(-1,-1);
   /* Iterates through all cards of the board */
-  for (std::size_t i=0; i<this->game.getBoard().size(); i++) {
-    for (std::size_t j=0; j<this->game.getBoard()[i].size(); j++) {
-      Card c = this->game.getBoard()[i][j];
+  for (std::size_t i=0; i<board.size(); i++) {
+    for (std::size_t j=0; j<board[i].size(); j++) {
+      Card c = board[i][j];
       if (c.getSprite().getGlobalBounds().contains(pos.x, pos.y)) {
-        std::cout << "Collision détectée, à parti de là c'est cassé" << std::endl;
+        v.x = i;
+        v.y = j;
+      }
+      return v;
+    }
+  }
+  return v;
+}
+
+
         /* Checks that the card is not already flipped over */
+        /**
         if (!c.flipFront()) {
           cardId cid = { (Textures::ID)c.getPairId(), (int)i, (int)j };
           switch (gs.getState()) {
@@ -28,9 +36,4 @@ void EventManager::ManageClick(sf::Vector2f pos)
               std::cout << "Click détecté, état 3" << std::endl;
               break;
           }
-        }
-        return;
-      }
-    }
-  }
-}
+          */

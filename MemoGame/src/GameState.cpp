@@ -1,9 +1,45 @@
 #include <iostream>
 #include "../inc/GameState.h"
 
-GameState::GameState(Game& game): game(game)
+GameState::GameState()
 {
-	this->state = PendingForFirstCard;
+  this->state = PendingForFirstCard;
+}
+
+/**
+ * Return codes:
+ * 0: cards must not be flipped back
+ * 1: cards do not match, they must be flipped back
+ * -1: error code
+ */
+int GameState::flipCardState(cardId cid)
+{
+  switch (this->state) {
+    case PendingForFirstCard :
+      this->first = cid;
+      this->state = PendingForSecondCard;
+      return 0;
+    case PendingForSecondCard :
+      this->second = cid;
+      /* Checks wether card can be paired */
+      if (this->first.id == this->second.id) {
+        /* Cards are paired, they are left on the front side */
+        this->state = PendingForFirstCard;
+        return 0;
+        /* Checks wether the game is over, and return 3 in this case */
+      } else {
+        this->state = PendingForFirstCard;
+        return 1;
+      }
+    default :
+      return -1;
+  }
+	return -1;
+}
+
+void GameState::endGame()
+{
+  std::cout << "Game over !" << std::endl;
 }
 
 GameState::State GameState::getState()
@@ -11,39 +47,10 @@ GameState::State GameState::getState()
 	return this->state;
 }
 
-int GameState::flipFirstCard(cardId cid)
+std::vector<sf::Vector2i> GameState::getCards()
 {
-	if (this->state != PendingForFirstCard) {
-    return -1;
-	}
-	this->first = cid;
-	this->state = PendingForSecondCard;
-	this->game.getBoard()[cid.x][cid.y].flipFront();
-	return 0;
-}
-
-int GameState::flipSecondCard(cardId cid)
-{
-	if (this->state != PendingForSecondCard
-	    || this->first.id <= Textures::FrontOffset
-	    || this->second.id <= Textures::FrontOffset)
-	{
-		return -1;
-	}
-	this->second = cid;
-
-	/* Checks if cards match and decides of the next state */
-	if (first.id != second.id) {
-    this->state = PendingForFirstCard;
-    return 0;
-  } else {
-    this->state = GameOver;
-    endGame();
-    return 0;
-  }
-}
-
-void GameState::endGame()
-{
-  std::cout << "Game over !" << std::endl;
+  std::vector<sf::Vector2i> res;
+  res[0] = this->first.pos;
+  res[1] = this->second.pos;
+	return res;
 }

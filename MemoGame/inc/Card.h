@@ -10,10 +10,6 @@
 class Card
 {
 	public:
-	  /**
-	   * Deault constructor, used to initialize GameState.
-	   */
-	  Card();
 		/**
 		 * Complete constructor.
 		 */

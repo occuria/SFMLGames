@@ -1,21 +1,17 @@
 #ifndef DEF_EVENT_MANAGER
 #define DEF_EVENT_MANAGER
 
-#include "Game.hpp"
-#include "GameState.h"
+#include <SFML/Graphics.hpp>
+#include "Card.h"
 
 class EventManager
 {
   public:
-    EventManager(Game&, GameState&);
     /**
-     * Reacts to click.
+     * Returns the position of the card that has been clicked on.
+     * Returns {-1, -1} if none.
      */
-    void ManageClick(sf::Vector2f);
-
-  private:
-    Game& game;
-    GameState& gs;
+    sf::Vector2i manageClick(std::vector<std::vector<Card>>, sf::Vector2f);
 
 };
 

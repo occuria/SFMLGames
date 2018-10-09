@@ -2,30 +2,28 @@
 #define DEF_GAMESTATE
 
 #include <SFML/Graphics.hpp>
-#include "Card.h"
-#include "Game.hpp"
+#include "TextureHolder.hpp"
+
+class Game;
 
 struct cardId {
   Textures::ID id;
-  int x, y;
+  sf::Vector2i pos;
 };
 
 class GameState
 {
 	public:
-		GameState(Game&);
 		enum State {PendingForFirstCard, PendingForSecondCard, GameOver};
 		/**
-		 * To be called in PendingForFirstCard state.
-		 * Changes state to PendingForSecondCard.
+		 * Default constructor to set the initial state.
 		 */
-		int flipFirstCard(cardId cid);
+		GameState();
 		/**
-		 * To be called in PendingForSecondCard state.
-		 * Changes state back to PendingForFirstCard, or to GameOver if all cards
-		 * are succesfully paired.
+		 * To be called in PendingForFirstCard or PendingForSecondCard state.
+		 * Updates the state appropriately.
 		 */
-		int flipSecondCard(cardId cid);
+		int flipCardState(cardId cid);
 		/**
 		 * To be called in GameOver state.
 		 */
@@ -34,10 +32,13 @@ class GameState
 		 * Returns game state.
 		 */
 		State getState();
+		/**
+		 * Returns both card id.
+		 */
+    std::vector<sf::Vector2i> getCards();
 		
 	private:
 		State state;
-		Game game;
     cardId first;
     cardId second;
 };

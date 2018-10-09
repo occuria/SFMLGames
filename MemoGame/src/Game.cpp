@@ -63,7 +63,6 @@ void Game::display(sf::RenderWindow& window)
 	/* Displays cards */
 	for (std::vector<Card> vc : board) {
 	  for (Card c : vc) {
-      std::cout << std::to_string(c.isPaired()) << std::endl;
 	    window.draw(c.getSprite());
     }
   }
@@ -71,14 +70,37 @@ void Game::display(sf::RenderWindow& window)
   window.display();
 }
 
-std::map<int, Textures::ID> Game::getTexMap()
+int Game::manageEvent(sf::Vector2f pos)
 {
-  return this->texMap;
+  sf::Vector2i v;
+  v = this->em.manageClick(this->board, pos);
+  if (v.x == -1 && v.y == -1) {
+    return 0;
+  }
+  return flipCard(v);
 }
 
-std::vector<std::vector<Card>>& Game::getBoard()
+int Game::flipCard(sf::Vector2i pos)
 {
-  return this->board;
+  /* Checks wether a card has been clicked on or not */
+
+  Card& c = this->board[pos.x][pos.y];
+  /* Stops here if the card is already flipped on the front side */
+  if (c.isPaired()) { return -1; }
+  /* Flips the card if the game is in the right state */
+  cardId cid = { (Textures::ID)c.getPairId(), pos };
+  switch (this->gs.flipCardState(cid)) { 
+    case 1 : {
+      /* Flip cards back */
+      std::vector<sf::Vector2i> v = this->gs.getCards();
+      board[v[0].x][v[0].y].flipBack();
+      board[v[1].x][v[1].y].flipBack();
+      break; }
+    default :
+      /* Do not flip cards back */
+      break;
+  }
+  return 0;
 }
 
 bool Game::areAllCardsPaired()
@@ -90,4 +112,14 @@ bool Game::areAllCardsPaired()
     }
   }
   return res;
+}
+
+std::map<int, Textures::ID> Game::getTexMap()
+{
+  return this->texMap;
+}
+
+std::vector<std::vector<Card>> Game::getBoard()
+{
+  return this->board;
 }
