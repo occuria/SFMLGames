@@ -28,10 +28,13 @@ int GameState::nextState(cardId cid)
     case Decision :
       /* Checks wether card can be paired */
       this->state = PendingForFirstCard;
+      std::cout << "Decision : ";
       if (this->first.id == this->second.id) {
+        std::cout << "Match" << std::endl;
         /* Paired */
         return 1;
       } else {
+        std::cout << "Don'tMatch" << std::endl;
         /* Not paired */
         return 2;
       }
@@ -55,7 +58,7 @@ GameState::State GameState::getState()
 std::vector<sf::Vector2i> GameState::getCards()
 {
   std::vector<sf::Vector2i> res;
-  res[0] = this->first.pos;
-  res[1] = this->second.pos;
+  res.push_back(this->first.pos);
+  res.push_back(this->second.pos);
 	return res;
 }

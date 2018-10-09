@@ -75,8 +75,11 @@ int Game::manageEvent(sf::Vector2f pos)
   sf::Vector2i v;
   /* If game is in decision state, do not look for the click position and
    * directly go to next state. */
-  cardId null = { Textures::Last, sf::Vector2i(-1, -1) };
-  this->gs.nextState(null);
+  if (this->gs.getState() == GameState::State::Decision) {
+    cardId null = { Textures::Last, sf::Vector2i(-1, -1) };
+    this->gs.nextState(null);
+    return 0;
+  }
   /* Else, find the clicked card then go to next state. */
   v = this->em.manageClick(this->board, pos);
   /* Stops here if no card has been found */
@@ -86,7 +89,6 @@ int Game::manageEvent(sf::Vector2f pos)
 
 int Game::flipCard(sf::Vector2i pos)
 {
-  std::cout << "Flip Card : " << pos.x << "," << pos.y << std::endl;
   Card& c = this->board[pos.x][pos.y];
   /* Stops here if the card is already flipped on the front side */
   if (c.isPaired()) { return -1; }
@@ -95,18 +97,18 @@ int Game::flipCard(sf::Vector2i pos)
   switch (this->gs.nextState(cid)) { 
     case 0 : 
       /* Flip the card on the front */
-      std::cout << "The card is flipped on the front side" << std::endl;
       board[cid.pos.x][cid.pos.y].flipFront();
       break;
     case 2 : {
-      std::cout << "Cards are flipped back" << std::endl;
       /* Flip cards back */
+      std::cout << "Flip cards back" << std::endl;
       std::vector<sf::Vector2i> v = this->gs.getCards();
+      std::cout << "C1:" << v[0].x << "," << v[0].y << std::endl;
+      std::cout << "C2:" << v[1].x << "," << v[1].y << std::endl;
       board[v[0].x][v[0].y].flipBack();
       board[v[1].x][v[1].y].flipBack();
       break; }
     default :
-      std::cout << "We do nothing" << std::endl;
       break;
   }
   return 0;
