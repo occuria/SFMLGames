@@ -52,11 +52,11 @@ int main() {
 						break;
 					}
 				/* Click */
-				case sf::Event::MouseButtonPressed:
+      case sf::Event::MouseButtonPressed:
 					{
 						if (event.mouseButton.button == sf::Mouse::Left) {
-              std::cout << "Click détecté" << std::endl;
 						  em.ManageClick(sf::Vector2f(event.mouseButton.x,event.mouseButton.y));
+              game.display(window);
             }
 						break;
 					}

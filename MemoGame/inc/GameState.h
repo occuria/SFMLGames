@@ -7,7 +7,7 @@
 
 struct cardId {
   Textures::ID id;
-  std::vector<int> pos;
+  int x, y;
 };
 
 class GameState

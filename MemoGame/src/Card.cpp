@@ -17,12 +17,12 @@ Card::Card(boardDimensions bd, Textures::ID pairId)
 int Card::flipFront()
 {
   /* Check if the card can be flipped on the front side */
-	if (isFlipped) { return -1; }
+	if (this->isFlipped) { return -1; }
 	/* Get the card front texture and set it onto the s */
-  sf::Texture t = TextureHolder::get()->get((this->pairId));
-	this->s.setTexture(t);
+  std::cout << "flipFront" << std::endl;
+	this->s.setTexture(TextureHolder::get()->get((this->pairId)));
 	this->s.setColor(sf::Color(255,255,255));
-	isFlipped = true;
+	this->isFlipped = true;
 	return 0;
 }
 

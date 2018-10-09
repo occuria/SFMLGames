@@ -33,7 +33,7 @@ class Game
     /**
      * Returns the board of cards.
      */
-    std::vector<std::vector<Card>> getBoard();
+    std::vector<std::vector<Card>>& getBoard();
     /**
      * Returns true if all cards are paired.
      */

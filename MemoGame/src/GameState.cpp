@@ -18,6 +18,7 @@ int GameState::flipFirstCard(cardId cid)
 	}
 	this->first = cid;
 	this->state = PendingForSecondCard;
+	this->game.getBoard()[cid.x][cid.y].flipFront();
 	return 0;
 }
 

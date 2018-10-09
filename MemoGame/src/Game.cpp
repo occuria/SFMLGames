@@ -63,6 +63,7 @@ void Game::display(sf::RenderWindow& window)
 	/* Displays cards */
 	for (std::vector<Card> vc : board) {
 	  for (Card c : vc) {
+      std::cout << std::to_string(c.isPaired()) << std::endl;
 	    window.draw(c.getSprite());
     }
   }
@@ -75,7 +76,7 @@ std::map<int, Textures::ID> Game::getTexMap()
   return this->texMap;
 }
 
-std::vector<std::vector<Card>> Game::getBoard()
+std::vector<std::vector<Card>>& Game::getBoard()
 {
   return this->board;
 }
