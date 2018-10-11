@@ -4,10 +4,9 @@
 #include <algorithm>
 #include <random>
 #include <map>
-#include "../inc/Card.h"
+#include "../inc/Card.hpp"
 #include "../inc/Game.hpp"
-#include "../inc/GameState.h"
-#include "../inc/EventManager.hpp"
+#include "../inc/EventHandler.hpp"
 #include "../inc/TextureHolder.hpp"
 
 const float width = 1600;
@@ -41,27 +40,7 @@ int main() {
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
-		  /* Catch event */
-			switch(event.type) {
-				/* Window closure */
-				case sf::Event::Closed:
-					{
-						window.close();
-						break;
-					}
-				/* Click */
-      case sf::Event::MouseButtonPressed:
-					{
-						if (event.mouseButton.button == sf::Mouse::Left) {
-						  game.manageEvent(sf::Vector2f(
-						        event.mouseButton.x,event.mouseButton.y));
-              game.display(window);
-            }
-						break;
-					}
-				default:
-					break;
-			}
+      EventHolder::get().handleEvent(window, game, event);
 		}
     game.display(window);
 	}

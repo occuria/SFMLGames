@@ -2,7 +2,7 @@
 #include "../inc/Game.hpp"
 
 Game::Game(float rspacing, float width, float height, int xcards, int ycards):
- bd(boardDimensions(rspacing, width, height, xcards, ycards))
+ bd(boardDimensions(rspacing, width, height, xcards, ycards)), state(std::make_unique<PendingForCardsState>())
 {}
 
 void Game::loadResources()
@@ -70,48 +70,12 @@ void Game::display(sf::RenderWindow& window)
   window.display();
 }
 
-int Game::manageEvent(sf::Vector2f pos)
+void Game::updateState(sf::Vector2i coord)
 {
-  sf::Vector2i v;
-  /* If game is in decision state, do not look for the click position and
-   * directly go to next state. */
-  if (this->gs.getState() == GameState::State::Decision) {
-    cardId null = { Textures::Last, sf::Vector2i(-1, -1) };
-    this->gs.nextState(null);
-    return 0;
+  std::experimental::optional<std::unique_ptr<State>> opt = this->state->update(*this, coord);
+  if (opt) {
+    this->state.reset(opt->get());
   }
-  /* Else, find the clicked card then go to next state. */
-  v = this->em.manageClick(this->board, pos);
-  /* Stops here if no card has been found */
-  if (v.x == -1 && v.y == -1) { return -1; }
-  return flipCard(v);
-}
-
-int Game::flipCard(sf::Vector2i pos)
-{
-  Card& c = this->board[pos.x][pos.y];
-  /* Stops here if the card is already flipped on the front side */
-  if (c.isPaired()) { return -1; }
-  /* Flips the card if the game is in the right state */
-  cardId cid = { (Textures::ID)c.getPairId(), pos };
-  switch (this->gs.nextState(cid)) { 
-    case 0 : 
-      /* Flip the card on the front */
-      board[cid.pos.x][cid.pos.y].flipFront();
-      break;
-    case 2 : {
-      /* Flip cards back */
-      std::cout << "Flip cards back" << std::endl;
-      std::vector<sf::Vector2i> v = this->gs.getCards();
-      std::cout << "C1:" << v[0].x << "," << v[0].y << std::endl;
-      std::cout << "C2:" << v[1].x << "," << v[1].y << std::endl;
-      board[v[0].x][v[0].y].flipBack();
-      board[v[1].x][v[1].y].flipBack();
-      break; }
-    default :
-      break;
-  }
-  return 0;
 }
 
 bool Game::areAllCardsPaired()

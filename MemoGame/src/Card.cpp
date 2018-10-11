@@ -1,4 +1,4 @@
-#include "../inc/Card.h"
+#include "../inc/Card.hpp"
 #include <iostream>
 
 Card::Card(boardDimensions bd, Textures::ID pairId)
