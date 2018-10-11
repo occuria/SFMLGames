@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <random>
 #include <map>
+#include <thread>
+#include <X11/Xlib.h>
 #include "../inc/Card.hpp"
 #include "../inc/Game.hpp"
 #include "../inc/EventHandler.hpp"
@@ -15,7 +17,19 @@ const float rspacing = 1;
 const int xcards = 5;
 const int ycards = 4;
 
+/**
+ * Main display loop to be run in a separeted thread.
+ */
+void loop(sf::RenderWindow& window, Game& game)
+{
+  while(window.isOpen()) {
+    game.display(window);
+  }
+}
+
 int main() {
+  /* Needed to handle multiple graphical threads */
+  XInitThreads();
   /* Creates the window */
 	sf::RenderWindow window(sf::VideoMode(width, height), 
 	    "Memorizing Game", sf::Style::Fullscreen);
@@ -36,13 +50,16 @@ int main() {
 	music.play();
 	*/
 
-	/* Main loop */
+	/* Main display loop */
+	window.setActive(false);
+  std::thread t(&loop, std::ref(window), std::ref(game));
+
+	/* Main event handling loop */
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
       EventHolder::get().handleEvent(window, game, event);
 		}
-    game.display(window);
 	}
 	return 0;
 }

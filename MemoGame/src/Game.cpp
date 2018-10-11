@@ -72,10 +72,10 @@ void Game::display(sf::RenderWindow& window)
 
 void Game::updateState(sf::Vector2i coord)
 {
-  std::experimental::optional<std::unique_ptr<State>> opt = this->state->update(*this, coord);
-  if (opt) {
-    this->state.reset(opt->get());
-  }
+  std::cout << "Game::updateState" << std::endl;
+  std::cout << this->board[coord.x][coord.y].isPaired() << std::endl;
+  this->state->update(*this, coord);
+  std::cout << this->board[coord.x][coord.y].isPaired() << std::endl;
 }
 
 bool Game::areAllCardsPaired()
@@ -94,7 +94,7 @@ std::map<int, Textures::ID> Game::getTexMap()
   return this->texMap;
 }
 
-std::vector<std::vector<Card>> Game::getBoard()
+std::vector<std::vector<Card>>& Game::getBoard()
 {
   return this->board;
 }

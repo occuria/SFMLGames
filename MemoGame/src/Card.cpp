@@ -16,6 +16,7 @@ int Card::flipFront()
 {
   /* Check if the card can be flipped on the front side */
 	if (this->isFlipped) { return -1; }
+  std::cout << "FlipFront" << std::endl;
 	/* Get the card front texture and set it onto the s */
 	this->s.setTexture(TextureHolder::get().get((this->pairId)));
 	this->s.setColor(sf::Color(255,255,255));
@@ -25,8 +26,9 @@ int Card::flipFront()
 
 int Card::flipBack()
 {
-  /* Check if the card can be flipped on the front side */
+  /* Check if the card can be flipped back */
 	if (!this->isFlipped) { return -1;	}
+  std::cout << "FlipBack" << std::endl;
 	/* Get the card back texture and set it onto the s */
 	this->s.setTexture(TextureHolder::get().get((CARDBACK)));
 	this->s.setColor(sf::Color(50,0,100));

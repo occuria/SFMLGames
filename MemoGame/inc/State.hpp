@@ -2,6 +2,7 @@
 #define DEF_STATE
 
 #include <SFML/Graphics.hpp>
+#include <functional>
 #include <experimental/optional>
 #include <memory>
 #include "Card.hpp"
@@ -14,19 +15,16 @@ class State
 {
   public:
     virtual ~State() {}
-    virtual std::experimental::optional<std::unique_ptr<State>>
-      update(Game&, sf::Vector2i) = 0;
-
+    virtual void update(Game&, sf::Vector2i) = 0;
 };
 
 class PendingForCardsState : public State
 {
   public: 
-    std::experimental::optional<std::unique_ptr<State>>
-      update(Game&, sf::Vector2i);
+    void update(Game&, sf::Vector2i);
 
   private:
-    std::vector<Card> cards;
+    std::vector<std::reference_wrapper<Card>> cards;
 };
 
   

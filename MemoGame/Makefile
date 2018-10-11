@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Werror -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+CFLAGS=-Wall -Werror -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lpthread -lX11
 INC=./inc/
 SRC=./src/
 
