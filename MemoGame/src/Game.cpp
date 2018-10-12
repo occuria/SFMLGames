@@ -72,10 +72,7 @@ void Game::display(sf::RenderWindow& window)
 
 void Game::updateState(sf::Vector2i coord)
 {
-  std::cout << "Game::updateState" << std::endl;
-  std::cout << this->board[coord.x][coord.y].isPaired() << std::endl;
   this->state->update(*this, coord);
-  std::cout << this->board[coord.x][coord.y].isPaired() << std::endl;
 }
 
 bool Game::areAllCardsPaired()
