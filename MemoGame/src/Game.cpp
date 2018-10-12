@@ -86,11 +86,6 @@ bool Game::areAllCardsPaired()
   return res;
 }
 
-std::map<int, Textures::ID> Game::getTexMap()
-{
-  return this->texMap;
-}
-
 std::vector<std::vector<Card>>& Game::getBoard()
 {
   return this->board;

@@ -24,14 +24,6 @@ class Card
 		 */
 		int flipBack();
 		/**
-		 * Sets paired value to true.
-		 */
-		void pair();
-		/**
-		 * Sets paired value to false.
-		 */
-		void unpair();
-		/**
 		 * Returns the value of pairId.
 		 */
 		int getPairId();

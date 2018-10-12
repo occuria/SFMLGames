@@ -36,10 +36,6 @@ class Game
      */
     bool areAllCardsPaired();
     /**
-     * Returns the texture map.
-     */
-    std::map<int, Textures::ID> getTexMap();
-    /**
      * Returns the board of cards.
      */
     std::vector<std::vector<Card>>& getBoard();

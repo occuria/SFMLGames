@@ -49,13 +49,3 @@ bool Card::isPaired()
 {
 	return this->isFlipped;
 }
-
-void Card::pair()
-{
-	this->isFlipped = true;
-}
-
-void Card::unpair()
-{
-	this->isFlipped = false;
-}
