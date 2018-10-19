@@ -1,6 +1,8 @@
 #include <algorithm>
 #include "../inc/BoardDimensions.hpp"
 
+/* Ceci est une modification pour LittleWillow */
+
 boardDimensions::boardDimensions
   (float rspacing, float width, float height, int xcards, int ycards)
 {
